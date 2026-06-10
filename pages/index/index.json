@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "AI 旅行助手",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "trip-card": "../../components/trip-card/trip-card",
+    "progress-ring": "../../components/progress-ring/progress-ring",
+    "empty-state": "../../components/empty-state/empty-state"
+  }
+}

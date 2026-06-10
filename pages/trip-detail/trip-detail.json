@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "旅行详情",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "trip-card": "../../components/trip-card/trip-card",
+    "day-plan-card": "../../components/day-plan-card/day-plan-card",
+    "progress-ring": "../../components/progress-ring/progress-ring",
+    "empty-state": "../../components/empty-state/empty-state",
+    "ai-suggestion-card": "../../components/ai-suggestion-card/ai-suggestion-card"
+  }
+}

@@ -1,0 +1,131 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <loading-state wx:if="{{loading}}" text="加载预算数据..." />
+
+  <block wx:elif="{{overview}}">
+    <!-- 预算概览卡片 -->
+    <view class="overview-card card">
+      <view class="overview-main">
+        <text class="overview-label">总预算</text>
+        <text class="overview-total">¥{{overview.totalBudget}}</text>
+      </view>
+      <view class="overview-row">
+        <view class="overview-item">
+          <text class="overview-sub-label">已花费</text>
+          <text class="overview-sub-amount">¥{{overview.totalSpent}}</text>
+        </view>
+        <view class="overview-item right">
+          <text class="overview-sub-label">剩余</text>
+          <text class="overview-sub-amount {{overview.remaining >= 0 ? 'positive' : 'negative'}}">
+            ¥{{overview.remaining}}
+          </text>
+        </view>
+      </view>
+      <!-- 进度条 -->
+      <view class="progress-bar">
+        <view
+          class="progress-fill {{overview.percentage >= 90 ? 'danger' : overview.percentage >= 70 ? 'warning' : 'safe'}}"
+          style="width: {{overview.percentage > 100 ? 100 : overview.percentage}}%"
+        ></view>
+      </view>
+      <text class="progress-text">已使用 {{overview.percentage}}%</text>
+      <view class="daily-avg">
+        <text class="text-hint font-sm">日均已花费：¥{{overview.dailyAverage}}</text>
+      </view>
+    </view>
+
+    <!-- 分类明细 -->
+    <view class="section-header">
+      <text class="section-title">分类支出</text>
+    </view>
+    <view class="category-list">
+      <view class="category-item card" wx:for="{{overview.categoryBreakdown}}" wx:key="key">
+        <view class="cat-left">
+          <text class="cat-icon">{{item.icon}}</text>
+          <view class="cat-info">
+            <text class="cat-name">{{item.label}}</text>
+            <view class="cat-bar-wrap">
+              <view class="cat-bar" style="width: {{item.percentage}}%"></view>
+            </view>
+          </view>
+        </view>
+        <view class="cat-right">
+          <text class="cat-amount">¥{{item.amount}}</text>
+          <text class="cat-percent">{{item.percentage}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 消费列表 -->
+    <view class="section-header mt-md">
+      <text class="section-title">消费记录</text>
+    </view>
+    <view class="expense-list" wx:if="{{expenses.length > 0}}">
+      <view class="card">
+        <budget-card
+          wx:for="{{expenses}}"
+          wx:key="id"
+          expense="{{item}}"
+          categories="{{categoryMap}}"
+          bind:delete="onDeleteExpense"
+        />
+      </view>
+    </view>
+    <empty-state wx:else icon="💰" title="暂无消费记录" subtitle="点击右下角按钮添加消费" />
+  </block>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab-btn" bind:tap="onShowAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 添加消费弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddModal}}" bind:tap="onCloseAdd">
+    <view class="modal-content" catch:tap="">
+      <view class="modal-header">
+        <text class="modal-title">添加消费</text>
+        <text class="modal-close" bind:tap="onCloseAdd">✕</text>
+      </view>
+
+      <!-- 分类选择 -->
+      <text class="modal-label">分类</text>
+      <view class="category-pills">
+        <view
+          class="cat-pill {{newExpense.category === item.key ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="key"
+          data-cat="{{item.key}}"
+          bind:tap="onCategorySelect"
+        >
+          <text>{{item.icon}} {{item.label}}</text>
+        </view>
+      </view>
+
+      <!-- 金额 -->
+      <text class="modal-label">金额 (¥)</text>
+      <input
+        class="modal-input"
+        type="digit"
+        placeholder="请输入金额"
+        value="{{newExpense.amount}}"
+        bindinput="onAmountInput"
+      />
+
+      <!-- 描述 -->
+      <text class="modal-label">描述</text>
+      <input
+        class="modal-input"
+        placeholder="请输入消费描述"
+        value="{{newExpense.description}}"
+        bindinput="onDescInput"
+      />
+
+      <!-- 日期 -->
+      <text class="modal-label">日期</text>
+      <picker mode="date" value="{{newExpense.date}}" bindchange="onDateChange">
+        <view class="modal-input picker-display">{{newExpense.date || '请选择日期'}}</view>
+      </picker>
+
+      <button class="btn btn-primary btn-block mt-lg" bind:tap="onSaveExpense">保存</button>
+    </view>
+  </view>
+</view>

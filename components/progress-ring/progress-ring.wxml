@@ -1,0 +1,46 @@
+<!--
+  progress-ring 进度环组件
+  使用双半圆旋转技术实现环形进度条
+-->
+<view class="ring" style="width:{{size}}rpx; height:{{size}}rpx;">
+  <!-- 背景圆 -->
+  <view class="ring-bg" style="width:{{size}}rpx; height:{{size}}rpx; border-radius: 50%; border: {{strokeWidth}}rpx solid var(--border-color); box-sizing: border-box;"></view>
+
+  <!-- 右半圆 -->
+  <view class="ring-right" style="width:{{size/2}}rpx; height:{{size}}rpx; right: 0;">
+    <view
+      class="ring-half ring-right-half"
+      style="
+        width: {{size/2}}rpx;
+        height: {{size}}rpx;
+        border: {{strokeWidth}}rpx solid {{color}};
+        border-left: none;
+        border-radius: 0 {{size/2}}rpx {{size/2}}rpx 0;
+        box-sizing: border-box;
+        transform: rotate({{rightRotate}}deg);
+      "
+    ></view>
+  </view>
+
+  <!-- 左半圆 -->
+  <view class="ring-left" style="width:{{size/2}}rpx; height:{{size}}rpx; left: 0;">
+    <view
+      class="ring-half ring-left-half"
+      style="
+        width: {{size/2}}rpx;
+        height: {{size}}rpx;
+        border: {{strokeWidth}}rpx solid {{color}};
+        border-right: none;
+        border-radius: {{size/2}}rpx 0 0 {{size/2}}rpx;
+        box-sizing: border-box;
+        transform: rotate({{leftRotate}}deg);
+      "
+    ></view>
+  </view>
+
+  <!-- 内部文字区域 -->
+  <view class="ring-inner" style="width:{{innerSize}}rpx; height:{{innerSize}}rpx; top:{{strokeWidth}}rpx; left:{{strokeWidth}}rpx;">
+    <text class="ring-percent" style="color: {{color}};">{{percent}}%</text>
+    <text class="ring-text" wx:if="{{text}}">{{text}}</text>
+  </view>
+</view>

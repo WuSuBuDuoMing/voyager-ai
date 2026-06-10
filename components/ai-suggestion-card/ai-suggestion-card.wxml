@@ -1,0 +1,53 @@
+<!--
+  ai-suggestion-card AI建议卡片组件
+  展示AI推荐建议，包含标题、内容、推荐理由和置信度
+-->
+<view class="ai-card">
+  <!-- 卡片头部 -->
+  <view class="ai-header">
+    <view class="ai-icon-wrap">
+      <text class="ai-icon">{{suggestion.icon || '🤖'}}</text>
+    </view>
+    <view class="ai-title-wrap">
+      <text class="ai-label">AI 智能推荐</text>
+      <text class="ai-title">{{suggestion.title}}</text>
+    </view>
+  </view>
+
+  <!-- 建议内容 -->
+  <view class="ai-content">
+    <text class="content-text">{{suggestion.content}}</text>
+  </view>
+
+  <!-- 推荐理由 -->
+  <view class="ai-reason" wx:if="{{suggestion.reason}}">
+    <text class="reason-icon">💡</text>
+    <text class="reason-text">{{suggestion.reason}}</text>
+  </view>
+
+  <!-- 置信度进度条 -->
+  <view class="confidence-section" wx:if="{{suggestion.confidence !== undefined}}">
+    <view class="confidence-header">
+      <text class="confidence-label">置信度</text>
+      <text class="confidence-value">{{suggestion.confidence}}%</text>
+    </view>
+    <view class="confidence-bar">
+      <view
+        class="confidence-fill"
+        style="width: {{suggestion.confidence}}%;"
+      ></view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="ai-actions">
+    <view class="action-btn accept-btn" bindtap="handleAccept">
+      <text class="action-icon">👍</text>
+      <text class="action-text">采纳建议</text>
+    </view>
+    <view class="action-btn dismiss-btn" bindtap="handleDismiss">
+      <text class="action-icon">👎</text>
+      <text class="action-text">暂时忽略</text>
+    </view>
+  </view>
+</view>

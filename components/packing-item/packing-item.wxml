@@ -1,0 +1,12 @@
+<view class="packing-item {{item.checked ? 'checked' : ''}}" bind:longpress="onDelete">
+  <view class="checkbox {{item.checked ? 'active' : ''}}" catch:tap="onToggle">
+    <text wx:if="{{item.checked}}">✓</text>
+  </view>
+  <view class="item-content">
+    <text class="item-name {{item.checked ? 'strikethrough' : ''}}">{{item.name}}</text>
+    <text class="item-category">{{item.category}}</text>
+  </view>
+  <view class="quantity-badge" wx:if="{{item.quantity > 1}}">
+    <text>x{{item.quantity}}</text>
+  </view>
+</view>

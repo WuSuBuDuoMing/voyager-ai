@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "美食清单",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "food-item": "../../components/food-item/food-item",
+    "empty-state": "../../components/empty-state/empty-state",
+    "loading-state": "../../components/loading-state/loading-state"
+  }
+}

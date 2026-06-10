@@ -1,0 +1,27 @@
+<view class="food-card" bind:tap="onTap">
+  <image class="food-image" src="{{food.image}}" mode="aspectFill" lazy-load />
+  <view class="food-info">
+    <view class="food-header">
+      <text class="food-name">{{food.name}}</text>
+      <text class="tag tag-green">{{food.type}}</text>
+    </view>
+    <view class="food-meta">
+      <text class="food-price">{{food.priceRange}}</text>
+      <view class="rating">
+        <text class="star">★</text>
+        <text class="rating-num">{{food.rating}}</text>
+      </view>
+    </view>
+    <view class="food-tags" wx:if="{{food.tags && food.tags.length > 0}}">
+      <text class="mini-tag" wx:for="{{food.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="food-actions">
+      <view class="action-btn {{food.favorite ? 'active' : ''}}" catch:tap="onFavorite">
+        <text>{{food.favorite ? '❤️' : '🤍'}} 收藏</text>
+      </view>
+      <view class="action-btn {{food.eaten ? 'active eaten' : ''}}" catch:tap="onEaten">
+        <text>{{food.eaten ? '🤤 已吃' : '📌 未吃'}}</text>
+      </view>
+    </view>
+  </view>
+</view>

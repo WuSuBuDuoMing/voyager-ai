@@ -1,0 +1,169 @@
+/**
+ * pages/trips/trips.wxss 我的旅行页样式
+ */
+
+/* 页面容器 */
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+}
+
+/* ========== 头部 ========== */
+.header {
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-sm);
+  background: var(--bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.search-toggle {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+}
+
+.search-icon-text {
+  font-size: 28rpx;
+}
+
+/* ========== 搜索栏 ========== */
+.search-section {
+  padding: 0 var(--spacing-lg) var(--spacing-sm);
+  overflow: hidden;
+}
+
+.search-section.show {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border-radius: 40rpx;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+}
+
+.search-emoji {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: var(--font-md);
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.search-clear {
+  font-size: 28rpx;
+  color: var(--text-hint);
+  padding: 8rpx 12rpx;
+}
+
+/* ========== 筛选标签栏 ========== */
+.filter-section {
+  padding: 0 var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.filter-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.filter-tabs {
+  display: inline-flex;
+  gap: 8rpx;
+  padding: 4rpx 0;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 14rpx 28rpx;
+  border-radius: 32rpx;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.filter-tab.active {
+  color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  font-weight: 700;
+}
+
+.filter-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--brand-primary);
+}
+
+.filter-tab:active {
+  transform: scale(0.95);
+}
+
+/* ========== 旅行列表 ========== */
+.trip-list {
+  padding: 0 var(--spacing-md);
+}
+
+/* ========== 空状态 ========== */
+.empty-section {
+  padding: var(--spacing-xl) var(--spacing-md);
+  text-align: center;
+}
+
+.empty-action {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+}
+
+/* ========== FAB 浮动按钮 ========== */
+.fab-btn {
+  position: fixed;
+  right: 40rpx;
+  bottom: calc(160rpx + env(safe-area-inset-bottom));
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #07C160, #06AD56);
+  box-shadow: 0 6rpx 24rpx rgba(7, 193, 96, 0.4);
+  z-index: 50;
+  transition: all 0.3s ease;
+}
+
+.fab-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 4rpx 16rpx rgba(7, 193, 96, 0.3);
+}
+
+.fab-icon {
+  color: #FFFFFF;
+  font-weight: 300;
+}
+
+/* ========== 加载状态 ========== */
+.loading-section {
+  padding: 120rpx 0;
+}

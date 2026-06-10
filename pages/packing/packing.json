@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "行李清单",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "packing-item": "../../components/packing-item/packing-item",
+    "empty-state": "../../components/empty-state/empty-state",
+    "loading-state": "../../components/loading-state/loading-state"
+  }
+}

@@ -1,0 +1,63 @@
+<!--
+  trip-card 旅行卡片组件
+  展示旅行封面、目的地、日期、状态、预算进度和打包进度
+-->
+<view class="trip-card" bindtap="handleTap" style="{{trip.style || ''}}">
+  <!-- 封面图片区域，带渐变遮罩 -->
+  <view class="card-cover">
+    <image
+      class="cover-image"
+      src="{{trip.coverImage || 'https://picsum.photos/800/400?random=' + trip.id}}"
+      mode="aspectFill"
+    />
+    <view class="cover-overlay"></view>
+    <!-- 状态标签 -->
+    <view class="status-tag" style="background: {{statusColorMap[trip.status] || 'var(--text-hint)'}}">
+      {{statusMap[trip.status] || trip.status}}
+    </view>
+    <!-- 人数标签 -->
+    <view class="people-tag" wx:if="{{trip.peopleCount > 1}}">
+      👥 {{trip.peopleCount}}人
+    </view>
+  </view>
+
+  <!-- 卡片内容区域 -->
+  <view class="card-body">
+    <!-- 目的地名称 -->
+    <view class="destination">{{trip.destination}}</view>
+
+    <!-- 日期范围 -->
+    <view class="date-range">
+      <text class="date-icon">📅</text>
+      <text class="date-text">{{startDate}} ~ {{endDate}}</text>
+    </view>
+
+    <!-- 预算进度条 -->
+    <view class="budget-section" wx:if="{{trip.totalBudget > 0}}">
+      <view class="budget-header">
+        <text class="budget-label">预算</text>
+        <text class="budget-amount">¥{{trip.spentBudget}} / ¥{{trip.totalBudget}}</text>
+      </view>
+      <view class="progress-bar">
+        <view
+          class="progress-fill"
+          style="width: {{trip.totalBudget > 0 ? (trip.spentBudget / trip.totalBudget * 100 > 100 ? 100 : trip.spentBudget / trip.totalBudget * 100) : 0}}%; background: {{trip.spentBudget / trip.totalBudget > 0.9 ? 'var(--danger)' : 'var(--brand-primary)'}}"
+        ></view>
+      </view>
+    </view>
+
+    <!-- 打包进度 -->
+    <view class="packing-section" wx:if="{{trip.packingProgress !== undefined}}">
+      <view class="packing-header">
+        <text class="packing-label">📦 打包进度</text>
+        <text class="packing-percent">{{trip.packingProgress}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view
+          class="progress-fill packing-fill"
+          style="width: {{trip.packingProgress}}%"
+        ></view>
+      </view>
+    </view>
+  </view>
+</view>

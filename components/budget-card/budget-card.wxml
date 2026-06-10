@@ -1,0 +1,10 @@
+<view class="expense-item" bind:tap="onDelete">
+  <view class="expense-icon">
+    <text>{{categories[expense.category].icon || '💰'}}</text>
+  </view>
+  <view class="expense-info">
+    <text class="expense-desc">{{expense.description}}</text>
+    <text class="expense-date">{{expense.date}}</text>
+  </view>
+  <text class="expense-amount">-¥{{expense.amount}}</text>
+</view>

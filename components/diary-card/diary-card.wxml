@@ -1,0 +1,22 @@
+<view class="diary-card" bind:tap="onTap">
+  <view class="timeline-node">
+    <view class="node-dot"></view>
+    <view class="node-line"></view>
+  </view>
+  <view class="diary-content">
+    <view class="diary-header">
+      <text class="diary-date">{{diary.date}}</text>
+      <text class="diary-mood">{{diary.mood}}</text>
+    </view>
+    <text class="diary-title">{{diary.title}}</text>
+    <text class="diary-text">{{diary.content}}</text>
+    <view class="photo-grid" wx:if="{{diary.photos && diary.photos.length > 0}}">
+      <image class="photo-thumb" wx:for="{{diary.photos}}" wx:key="*this" wx:if="{{index < 4}}" src="{{item}}" mode="aspectFill" />
+    </view>
+    <view class="diary-stats">
+      <text class="stat" wx:if="{{diary.weather}}">{{diary.weather}}</text>
+      <text class="stat" wx:if="{{diary.cost}}">💰 ¥{{diary.cost}}</text>
+      <text class="stat" wx:if="{{diary.steps}}">👣 {{diary.steps}}步</text>
+    </view>
+  </view>
+</view>

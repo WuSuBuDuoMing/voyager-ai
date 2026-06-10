@@ -1,0 +1,173 @@
+<!--
+  pages/index/index 首页
+  旅行助手主页面，展示概览数据、倒计时、今日行程、最近旅行等
+-->
+<page-meta page-style="{{isDarkMode ? 'overflow-y: auto;' : ''}}" root-font-size="system" />
+
+<view class="page {{isDarkMode ? 'dark' : ''}}">
+  <!-- ========== 绿色渐变头部 ========== -->
+  <view class="header gradient-header">
+    <view class="header-content flex-between">
+      <view class="header-left">
+        <view class="greeting font-xl font-bold">你好，旅行者 🌍</view>
+        <view class="date-text font-sm" style="opacity: 0.85; margin-top: 8rpx;">{{currentDate}}</view>
+      </view>
+      <view class="avatar-wrap">
+        <view class="avatar flex-center">
+          <text class="avatar-text font-lg">👤</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view
+    scroll-y
+    class="page-scroll"
+    enhanced
+    show-scrollbar="{{false}}"
+  >
+    <!-- ========== 快速统计行（水平滚动）========== -->
+    <view class="stats-section">
+      <scroll-view scroll-x class="stats-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="stats-row flex-row">
+          <!-- 总旅行数 -->
+          <view class="stat-card card" wx:for="{{statsCards}}" wx:key="label">
+            <view class="stat-icon">{{item.icon}}</view>
+            <view class="stat-value font-xl font-bold">{{item.value}}</view>
+            <view class="stat-label font-xs text-secondary">{{item.label}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- ========== 倒计时区域 ========== -->
+    <view class="section animate-fade-in" wx:if="{{upcomingTrip}}">
+      <view class="section-header">
+        <text class="section-title">🚀 即将出发</text>
+      </view>
+      <view class="countdown-card card" bindtap="goToTripDetail" data-id="{{upcomingTrip.id}}">
+        <view class="countdown-cover">
+          <image
+            class="countdown-img"
+            src="{{upcomingTrip.coverImage || 'https://picsum.photos/800/400?random=' + upcomingTrip.id}}"
+            mode="aspectFill"
+          />
+          <view class="countdown-overlay"></view>
+          <view class="countdown-badge animate-pulse">
+            <text class="countdown-num font-xxl font-bold">{{upcomingTrip.daysLeft}}</text>
+            <text class="countdown-unit font-xs">天</text>
+          </view>
+          <view class="countdown-info">
+            <text class="countdown-dest font-lg font-bold text-white">{{upcomingTrip.destination}}</text>
+            <text class="countdown-date font-sm text-white" style="opacity: 0.85;">还有{{upcomingTrip.daysLeft}}天出发</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 今日行程 ========== -->
+    <view class="section animate-fade-in">
+      <view class="section-header">
+        <text class="section-title">📋 今日行程</text>
+        <text class="section-more" bindtap="goToTripDetail" wx:if="{{todayPlan}}">查看详情 ›</text>
+      </view>
+      <view wx:if="{{todayPlan}}">
+        <view class="card today-plan-card">
+          <view class="flex-between mb-sm">
+            <text class="font-md font-bold text-primary">{{todayPlan.destination}}</text>
+            <text class="tag tag-green">{{todayPlan.status}}</text>
+          </view>
+          <view wx:for="{{todayPlan.activities}}" wx:key="time" class="today-activity flex-row align-center" style="margin-top: 12rpx;">
+            <text class="activity-time font-sm text-brand font-bold" style="min-width: 100rpx;">{{item.time}}</text>
+            <text class="activity-name font-sm text-primary">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-hint card flex-center" style="padding: 48rpx;">
+        <text class="text-hint font-md">暂无今日行程 ☀️</text>
+      </view>
+    </view>
+
+    <!-- ========== 最近旅行 ========== -->
+    <view class="section animate-fade-in">
+      <view class="section-header">
+        <text class="section-title">✈️ 最近旅行</text>
+        <text class="section-more" bindtap="goToTrips">查看全部 ›</text>
+      </view>
+      <view wx:if="{{recentTrips.length > 0}}">
+        <trip-card
+          wx:for="{{recentTrips}}"
+          wx:key="id"
+          trip="{{item}}"
+          bind:tap="goToTripDetail"
+        />
+      </view>
+      <view wx:else class="empty-hint card flex-center" style="padding: 48rpx;">
+        <text class="text-hint font-md">还没有旅行计划，去创建一个吧！</text>
+      </view>
+    </view>
+
+    <!-- ========== 预算概览 ========== -->
+    <view class="section animate-fade-in" wx:if="{{budgetOverview.hasTrip}}">
+      <view class="section-header">
+        <text class="section-title">💰 预算概览</text>
+      </view>
+      <view class="card">
+        <view class="flex-between mb-sm">
+          <text class="font-md text-primary">{{budgetOverview.destination}}</text>
+          <text class="font-sm text-secondary">已花 ¥{{budgetOverview.spent}}</text>
+        </view>
+        <view class="budget-progress-bar">
+          <view
+            class="budget-progress-fill"
+            style="width: {{budgetOverview.percent > 100 ? 100 : budgetOverview.percent}}%; background: {{budgetOverview.percent > 90 ? 'var(--danger)' : budgetOverview.percent > 70 ? 'var(--warning)' : 'var(--brand-primary)'}}"
+          ></view>
+        </view>
+        <view class="flex-between mt-sm">
+          <text class="font-xs text-hint">总计 ¥{{budgetOverview.total}}</text>
+          <text class="font-xs {{budgetOverview.remaining < 0 ? 'text-danger' : 'text-success'}}">
+            剩余 ¥{{budgetOverview.remaining < 0 ? '-' : ''}}{{budgetOverview.remainingAbs}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 打包进度 ========== -->
+    <view class="section animate-fade-in" wx:if="{{packingProgress > 0}}">
+      <view class="section-header">
+        <text class="section-title">📦 打包进度</text>
+      </view>
+      <view class="card flex-row align-center" style="padding: 32rpx;">
+        <view class="packing-ring-wrap">
+          <progress-ring progress="{{packingProgress}}" size="{{120}}" strokeWidth="{{10}}" />
+        </view>
+        <view style="flex: 1; margin-left: 32rpx;">
+          <view class="font-lg font-bold text-primary">{{packingProgress}}%</view>
+          <view class="font-sm text-secondary mt-xs">行李已整理</view>
+          <view class="btn btn-secondary btn-sm mt-md" bindtap="goToPacking">继续整理</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 快捷操作网格 ========== -->
+    <view class="section animate-fade-in">
+      <view class="section-header">
+        <text class="section-title">⚡ 快捷操作</text>
+      </view>
+      <view class="quick-actions-grid">
+        <view
+          class="quick-action-item card flex-col flex-center"
+          wx:for="{{quickActions}}"
+          wx:key="label"
+          bindtap="{{item.action}}"
+        >
+          <text class="action-emoji">{{item.emoji}}</text>
+          <text class="action-label font-sm text-primary mt-xs">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部安全区占位 -->
+    <view style="height: 40rpx;"></view>
+  </scroll-view>
+</view>

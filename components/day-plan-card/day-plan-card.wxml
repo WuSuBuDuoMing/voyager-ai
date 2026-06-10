@@ -1,0 +1,67 @@
+<!--
+  day-plan-card 每日行程卡片组件
+  展示某一天的早中晚行程安排、预估费用和交通信息
+-->
+<view class="day-card" bindtap="handleTap">
+  <!-- 日期徽章 -->
+  <view class="day-badge">
+    <text class="day-number">D{{day.dayIndex}}</text>
+    <text class="day-date">{{day.date}}</text>
+  </view>
+
+  <!-- 卡片主体 -->
+  <view class="day-body">
+    <!-- 标题 -->
+    <view class="day-title">{{day.title || '第' + day.dayIndex + '天行程'}}</view>
+
+    <!-- 上午时段 -->
+    <view class="period-section" wx:if="{{day.morning && day.morning.activity}}">
+      <view class="period-header">
+        <text class="period-emoji">🌅</text>
+        <text class="period-label">上午</text>
+      </view>
+      <view class="period-content">
+        <text class="period-activity">{{day.morning.activity}}</text>
+        <text class="period-location" wx:if="{{day.morning.location}}">📍 {{day.morning.location}}</text>
+      </view>
+    </view>
+
+    <!-- 下午时段 -->
+    <view class="period-section" wx:if="{{day.afternoon && day.afternoon.activity}}">
+      <view class="period-header">
+        <text class="period-emoji">🌤</text>
+        <text class="period-label">下午</text>
+      </view>
+      <view class="period-content">
+        <text class="period-activity">{{day.afternoon.activity}}</text>
+        <text class="period-location" wx:if="{{day.afternoon.location}}">📍 {{day.afternoon.location}}</text>
+      </view>
+    </view>
+
+    <!-- 晚间时段 -->
+    <view class="period-section" wx:if="{{day.evening && day.evening.activity}}">
+      <view class="period-header">
+        <text class="period-emoji">🌙</text>
+        <text class="period-label">晚间</text>
+      </view>
+      <view class="period-content">
+        <text class="period-activity">{{day.evening.activity}}</text>
+        <text class="period-location" wx:if="{{day.evening.location}}">📍 {{day.evening.location}}</text>
+      </view>
+    </view>
+
+    <!-- 底部信息栏 -->
+    <view class="day-footer">
+      <!-- 预估费用 -->
+      <view class="footer-item" wx:if="{{day.estimatedCost > 0}}">
+        <text class="footer-icon">💰</text>
+        <text class="footer-text">预估 ¥{{day.estimatedCost}}</text>
+      </view>
+      <!-- 交通方式 -->
+      <view class="footer-item" wx:if="{{day.transport}}">
+        <text class="footer-icon">🚗</text>
+        <text class="footer-text">{{day.transport}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,157 @@
+<!--
+  pages/trip-detail/trip-detail 旅行详情页
+  展示旅行概览、统计、行程预览、日记预览、AI 建议等
+-->
+<view class="page {{isDarkMode ? 'dark' : ''}}">
+  <!-- ========== Hero 区域 ========== -->
+  <view class="hero-section" wx:if="{{trip}}">
+    <image
+      class="hero-cover"
+      src="{{trip.coverImage || 'https://picsum.photos/1080/600?random=' + trip.id}}"
+      mode="aspectFill"
+    />
+    <view class="hero-overlay"></view>
+
+    <!-- 返回按钮 -->
+    <view class="back-btn flex-center" bindtap="goBack">
+      <text class="text-white font-lg">‹</text>
+    </view>
+
+    <!-- Hero 内容 -->
+    <view class="hero-content">
+      <!-- 状态标签 -->
+      <view class="hero-status-tag" style="background: {{statusColor}};">
+        {{statusText}}
+      </view>
+      <!-- 目的地 -->
+      <view class="hero-destination font-title font-bold text-white">{{trip.destination}}</view>
+      <!-- 日期范围 -->
+      <view class="hero-dates font-md" style="color: rgba(255,255,255,0.85);">
+        📅 {{dateRange}}
+      </view>
+      <!-- 倒计时徽章 -->
+      <view class="hero-countdown" wx:if="{{countdownText}}">
+        <text class="font-sm text-white">⏳ {{countdownText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="detail-scroll" wx:if="{{trip}}">
+    <!-- ========== 统计网格（2x2）========== -->
+    <view class="section animate-fade-in">
+      <view class="stats-grid">
+        <view class="stat-card card">
+          <text class="stat-emoji">💰</text>
+          <text class="stat-val font-lg font-bold text-primary">¥{{budgetSpent}}</text>
+          <text class="stat-sub font-xs text-secondary">总预算 ¥{{budgetTotal}}</text>
+        </view>
+        <view class="stat-card card">
+          <text class="stat-emoji">📅</text>
+          <text class="stat-val font-lg font-bold text-primary">{{tripDays}}天</text>
+          <text class="stat-sub font-xs text-secondary">行程时长</text>
+        </view>
+        <view class="stat-card card">
+          <text class="stat-emoji">📍</text>
+          <text class="stat-val font-lg font-bold text-primary">{{placesCount}}</text>
+          <text class="stat-sub font-xs text-secondary">景点数量</text>
+        </view>
+        <view class="stat-card card">
+          <text class="stat-emoji">🍜</text>
+          <text class="stat-val font-lg font-bold text-primary">{{foodCount}}</text>
+          <text class="stat-sub font-xs text-secondary">美食收藏</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 快捷操作行 ========== -->
+    <view class="section animate-fade-in">
+      <view class="quick-nav-grid">
+        <view
+          class="quick-nav-item flex-col flex-center"
+          wx:for="{{quickNavItems}}"
+          wx:key="label"
+          bindtap="{{item.action}}"
+        >
+          <text class="quick-nav-emoji">{{item.emoji}}</text>
+          <text class="quick-nav-label font-xs text-primary">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 行程预览 ========== -->
+    <view class="section animate-fade-in">
+      <view class="section-header">
+        <text class="section-title">📋 每日行程</text>
+        <text class="section-more" bindtap="viewFullItinerary" wx:if="{{trip.itinerary.length > 0}}">查看全部 ›</text>
+      </view>
+      <view wx:if="{{trip.itinerary.length > 0}}">
+        <view wx:for="{{tripPreviewDays}}" wx:key="day">
+          <view class="day-plan-wrap" bindtap="goToDayPlan" data-index="{{index}}">
+            <view class="day-header flex-between mb-sm">
+              <view class="flex-row align-center" style="gap: 12rpx;">
+                <text class="day-badge tag tag-green">第{{item.day}}天</text>
+                <text class="font-sm text-secondary">{{item.date}}</text>
+              </view>
+              <text class="text-hint font-sm">›</text>
+            </view>
+            <view class="card" style="margin-bottom: 16rpx;">
+              <view class="day-title font-md font-bold text-primary mb-sm">{{item.title}}</view>
+              <view wx:for="{{item.activities}}" wx:for-item="act" wx:key="time" class="day-activity flex-row align-center" style="padding: 8rpx 0;">
+                <text class="activity-time font-sm text-brand font-bold" style="min-width: 90rpx;">{{act.time}}</text>
+                <text class="activity-name font-sm text-primary">{{act.name}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-card card flex-center" style="padding: 40rpx;">
+        <text class="text-hint font-md">暂无行程安排</text>
+      </view>
+    </view>
+
+    <!-- ========== 最新日记 ========== -->
+    <view class="section animate-fade-in" wx:if="{{latestDiary}}">
+      <view class="section-header">
+        <text class="section-title">📖 最新日记</text>
+        <text class="section-more" bindtap="goToDiary">查看全部 ›</text>
+      </view>
+      <view class="card diary-preview">
+        <view class="flex-between mb-sm">
+          <text class="font-md font-bold text-primary">{{latestDiary.title}}</text>
+          <text class="text-hint font-xs">{{latestDiary.date}}</text>
+        </view>
+        <text class="font-sm text-secondary" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+          {{latestDiary.content}}
+        </text>
+        <view wx:if="{{latestDiary.mood}}" class="mt-sm">
+          <text class="text-hint font-xs">{{latestDiary.mood}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== AI 小贴士 ========== -->
+    <view class="section animate-fade-in">
+      <view class="section-header">
+        <text class="section-title">🤖 AI 旅行贴士</text>
+      </view>
+      <view class="card" wx:for="{{aiTips}}" wx:key="index" style="padding: 24rpx; margin-bottom: 12rpx;">
+        <view class="flex-row align-start" style="gap: 12rpx;">
+          <text class="tip-icon font-lg">{{item.icon}}</text>
+          <view>
+            <text class="font-md font-bold text-primary" style="display: block;">{{item.title}}</text>
+            <text class="font-sm text-secondary mt-xs" style="display: block;">{{item.content}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部安全区 -->
+    <view style="height: 60rpx;"></view>
+  </scroll-view>
+
+  <!-- ========== 加载状态 ========== -->
+  <view wx:if="{{!trip && !loading}}" class="empty-wrap flex-center" style="min-height: 100vh;">
+    <empty-state title="未找到旅行信息" icon="🔍" />
+    <view class="btn btn-primary mt-lg" bindtap="goBack">返回</view>
+  </view>
+</view>

@@ -1,0 +1,89 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <loading-state wx:if="{{loading}}" text="加载行李清单..." />
+
+  <block wx:elif="{{true}}">
+    <!-- 头部进度 -->
+    <view class="packing-header">
+      <view class="header-left">
+        <text class="page-title">行李清单</text>
+        <text class="progress-text">{{progress}}% 已打包</text>
+      </view>
+      <view class="progress-ring">
+        <view class="ring-bg">
+          <view class="ring-fill" style="background: conic-gradient(var(--brand-primary) {{progress * 3.6}}deg, var(--bg-primary) 0deg)">
+          </view>
+          <view class="ring-inner">
+            <text class="ring-text">{{progress}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 统计栏 -->
+    <view class="stats-bar">
+      <view class="stats-item">
+        <text class="stats-num">{{stats.total}}</text>
+        <text class="stats-label">全部</text>
+      </view>
+      <view class="stats-item packed">
+        <text class="stats-num">{{stats.packed}}</text>
+        <text class="stats-label">已打包</text>
+      </view>
+      <view class="stats-item unpacked">
+        <text class="stats-num">{{stats.unpacked}}</text>
+        <text class="stats-label">未打包</text>
+      </view>
+    </view>
+
+    <!-- 添加物品输入 -->
+    <view class="add-item-row">
+      <input
+        class="add-input"
+        placeholder="快速添加物品..."
+        value="{{newItemName}}"
+        bindinput="onNameInput"
+        bindconfirm="onAddItem"
+      />
+      <picker bindchange="onCategorySelect" value="0" range-key="key" range="{{categories}}">
+        <view class="category-picker">📦</view>
+      </picker>
+      <view class="add-btn" bind:tap="onAddItem">
+        <text>添加</text>
+      </view>
+    </view>
+
+    <!-- 分类筛选 -->
+    <scroll-view class="filter-scroll" scroll-x enable-flex>
+      <view class="filter-tabs">
+        <view
+          class="filter-tab {{activeCategory === item.key ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="key"
+          data-cat="{{item.key}}"
+          bind:tap="onCategoryTap"
+        >
+          <text>{{item.icon ? item.icon + ' ' : ''}}{{item.key}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 行李列表 -->
+    <view class="packing-list" wx:if="{{filteredList.length > 0}}">
+      <packing-item
+        wx:for="{{filteredList}}"
+        wx:key="id"
+        item="{{item}}"
+        bind:toggle="onToggleItem"
+        bind:delete="onDeleteItem"
+      />
+    </view>
+
+    <!-- 空状态 -->
+    <empty-state
+      wx:elif="{{!loading && filteredList.length === 0}}"
+      icon="🧳"
+      title="暂无行李物品"
+      subtitle="在上方输入框快速添加行李物品"
+    />
+  </block>
+</view>

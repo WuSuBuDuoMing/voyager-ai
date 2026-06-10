@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/create-trip/create-trip",
+    "pages/trips/trips",
+    "pages/trip-detail/trip-detail",
+    "pages/day-plan/day-plan",
+    "pages/places/places",
+    "pages/budget/budget",
+    "pages/packing/packing",
+    "pages/food/food",
+    "pages/diary/diary",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#07C160",
+    "navigationBarTitleText": "AI 旅行计划助手",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F6F7FB",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#07C160",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/trips/trips",
+        "text": "旅行",
+        "iconPath": "assets/icons/trip.png",
+        "selectedIconPath": "assets/icons/trip-active.png"
+      },
+      {
+        "pagePath": "pages/diary/diary",
+        "text": "日记",
+        "iconPath": "assets/icons/diary.png",
+        "selectedIconPath": "assets/icons/diary-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icons/profile.png",
+        "selectedIconPath": "assets/icons/profile-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {}
+}

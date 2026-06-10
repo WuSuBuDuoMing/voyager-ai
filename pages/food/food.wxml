@@ -1,0 +1,97 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <!-- 头部 -->
+  <view class="page-header">
+    <text class="page-title">美食清单</text>
+    <text class="page-subtitle" wx:if="{{destination}}">{{destination}}</text>
+  </view>
+
+  <!-- 筛选标签 -->
+  <scroll-view class="filter-scroll" scroll-x enable-flex>
+    <view class="filter-tabs">
+      <view
+        class="filter-tab {{activeFilter === item.key ? 'active' : ''}}"
+        wx:for="{{filterTabs}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bind:tap="onFilterTap"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 加载状态 -->
+  <loading-state wx:if="{{loading}}" text="加载美食数据..." />
+
+  <!-- 美食列表 -->
+  <view class="food-list" wx:elif="{{filteredFoods.length > 0}}">
+    <food-item
+      wx:for="{{filteredFoods}}"
+      wx:key="id"
+      food="{{item}}"
+      bind:tap="onFoodTap"
+      bind:favorite="onFoodFavorite"
+      bind:eaten="onFoodEaten"
+    />
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:elif="{{!loading && filteredFoods.length === 0}}"
+    icon="🍜"
+    title="暂无美食"
+    subtitle="收藏美食，记录你的味觉旅程"
+  />
+
+  <!-- 美食详情弹窗 -->
+  <view class="detail-mask" wx:if="{{showDetail}}" bind:tap="onCloseDetail">
+    <view class="detail-sheet" catch:tap="">
+      <view class="detail-header">
+        <text class="detail-title">美食详情</text>
+        <text class="detail-close" bind:tap="onCloseDetail">✕</text>
+      </view>
+
+      <block wx:if="{{selectedFood}}">
+        <image class="detail-image" src="{{selectedFood.image}}" mode="aspectFill" />
+        <view class="detail-body">
+          <view class="detail-row">
+            <text class="detail-name">{{selectedFood.name}}</text>
+            <text class="tag tag-green">{{selectedFood.type}}</text>
+          </view>
+          <view class="detail-meta">
+            <text class="detail-price">{{selectedFood.priceRange}}</text>
+            <view class="rating">
+              <text class="star">★</text>
+              <text class="rating-num">{{selectedFood.rating}}</text>
+            </view>
+          </view>
+          <view class="detail-tags" wx:if="{{selectedFood.tags && selectedFood.tags.length > 0}}">
+            <text class="mini-tag" wx:for="{{selectedFood.tags}}" wx:key="*this">{{item}}</text>
+          </view>
+
+          <view class="divider"></view>
+
+          <text class="detail-section-title">简介</text>
+          <text class="detail-desc">{{selectedFood.description || '暂无介绍'}}</text>
+
+          <text class="detail-section-title">地址</text>
+          <text class="detail-desc">{{selectedFood.address || '暂无地址'}}</text>
+
+          <text class="detail-section-title">小贴士</text>
+          <text class="detail-desc">{{selectedFood.tips || '暂无贴士'}}</text>
+
+          <view class="divider"></view>
+
+          <view class="detail-actions">
+            <view class="detail-btn {{selectedFood.favorite ? 'active-fav' : ''}}" bind:tap="onDetailFavorite">
+              <text>{{selectedFood.favorite ? '❤️ 已收藏' : '🤍 收藏'}}</text>
+            </view>
+            <view class="detail-btn {{selectedFood.eaten ? 'active-eaten' : ''}}" bind:tap="onDetailEaten">
+              <text>{{selectedFood.eaten ? '🤤 已吃过' : '📌 标记已吃'}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

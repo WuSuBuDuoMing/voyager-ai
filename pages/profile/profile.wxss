@@ -1,0 +1,141 @@
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #07C160, #06AD56);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.avatar-emoji {
+  font-size: 80rpx;
+}
+
+.username {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.user-hint {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  margin-top: 4rpx;
+  margin-bottom: var(--spacing-lg);
+}
+
+.user-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  width: 100%;
+  box-shadow: 0 2rpx 12rpx var(--shadow-color);
+}
+
+.user-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-stat-num {
+  font-size: var(--font-xxl);
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+.user-stat-label {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  margin-top: 4rpx;
+}
+
+.user-stat-divider {
+  width: 2rpx;
+  height: 48rpx;
+  background: var(--border-color);
+}
+
+/* Menu sections */
+.menu-section {
+  padding: 0 var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.section-label {
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+  margin-bottom: var(--spacing-sm);
+  margin-left: var(--spacing-sm);
+}
+
+.menu-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.menu-icon {
+  font-size: 40rpx;
+}
+
+.menu-text {
+  font-size: var(--font-md);
+  color: var(--text-primary);
+}
+
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.menu-value {
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+}
+
+.menu-arrow {
+  font-size: var(--font-lg);
+  color: var(--text-hint);
+}
+
+.menu-divider {
+  height: 1rpx;
+  background: var(--border-color);
+  margin: 0 var(--spacing-lg);
+}
+
+.footer {
+  text-align: center;
+  padding: var(--spacing-xl) 0 var(--spacing-xxl);
+}
+
+.footer-text {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+}

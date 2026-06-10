@@ -1,0 +1,120 @@
+/**
+ * pages/day-plan/day-plan.wxss 每日行程详情页样式
+ */
+
+/* 页面容器 */
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* ========== 顶部渐变头部 ========== */
+.page-header {
+  padding: 80rpx var(--spacing-lg) 40rpx;
+}
+
+.header-top {
+  margin-bottom: var(--spacing-md);
+}
+
+.back-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.back-btn:active {
+  opacity: 0.7;
+}
+
+.day-index-badge {
+  display: inline-flex;
+  padding: 4rpx 20rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.day-info {
+  margin-top: 8rpx;
+}
+
+/* ========== 可滚动区域 ========== */
+.day-scroll {
+  height: calc(100vh - 280rpx);
+}
+
+/* ========== 区块通用 ========== */
+.section {
+  padding: 0 var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+/* ========== 时间段标题 ========== */
+.period-header {
+  margin-bottom: var(--spacing-md);
+  gap: 12rpx;
+}
+
+.period-icon {
+  font-size: 36rpx;
+}
+
+/* ========== 活动卡片 ========== */
+.activity-card {
+  padding: 24rpx;
+  margin-bottom: 12rpx;
+}
+
+.activity-time {
+  min-width: 80rpx;
+}
+
+.activity-cost {
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.edit-hint {
+  text-align: right;
+  opacity: 0.6;
+}
+
+/* ========== 添加活动按钮 ========== */
+.add-activity-btn {
+  padding: 20rpx;
+  border: 2rpx dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  margin-bottom: 8rpx;
+  transition: all 0.3s ease;
+}
+
+.add-activity-btn:active {
+  background: var(--brand-primary-light);
+  border-color: var(--brand-primary);
+}
+
+/* ========== 信息卡片 ========== */
+.info-card {
+  padding: var(--spacing-lg);
+}
+
+.info-emoji {
+  flex-shrink: 0;
+  margin-top: 4rpx;
+}
+
+/* ========== 底部导航 ========== */
+.nav-row .btn {
+  font-size: var(--font-sm);
+  padding: 20rpx 16rpx;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+}
+
+.nav-row .btn:active {
+  transform: scale(0.96);
+}

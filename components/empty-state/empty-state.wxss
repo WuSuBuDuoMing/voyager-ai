@@ -1,0 +1,25 @@
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx var(--spacing-lg);
+}
+
+.empty-emoji {
+  font-size: 120rpx;
+  margin-bottom: var(--spacing-lg);
+}
+
+.empty-title {
+  font-size: var(--font-lg);
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+.empty-subtitle {
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+  text-align: center;
+}

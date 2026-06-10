@@ -1,0 +1,190 @@
+/**
+ * pages/trip-detail/trip-detail.wxss 旅行详情页样式
+ */
+
+/* 页面容器 */
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* ========== Hero 区域 ========== */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 520rpx;
+  overflow: hidden;
+}
+
+.hero-cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+}
+
+.back-btn {
+  position: absolute;
+  top: 80rpx;
+  left: 24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.back-btn:active {
+  opacity: 0.7;
+}
+
+.hero-content {
+  position: absolute;
+  bottom: 32rpx;
+  left: 32rpx;
+  right: 32rpx;
+  z-index: 5;
+}
+
+.hero-status-tag {
+  display: inline-flex;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: var(--font-xs);
+  color: #FFFFFF;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.hero-destination {
+  display: block;
+  line-height: 1.2;
+}
+
+.hero-dates {
+  display: block;
+  margin-top: 8rpx;
+}
+
+.hero-countdown {
+  display: inline-flex;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  margin-top: 12rpx;
+}
+
+/* ========== 可滚动详情区域 ========== */
+.detail-scroll {
+  height: calc(100vh - 520rpx);
+  padding-top: var(--spacing-md);
+}
+
+/* ========== 区块通用 ========== */
+.section {
+  padding: 0 var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+/* ========== 统计网格 ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 16rpx;
+  text-align: center;
+}
+
+.stat-emoji {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+.stat-val {
+  line-height: 1.2;
+}
+
+.stat-sub {
+  margin-top: 4rpx;
+}
+
+/* ========== 快捷导航网格 ========== */
+.quick-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12rpx;
+}
+
+.quick-nav-item {
+  padding: 20rpx 8rpx;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.quick-nav-item:active {
+  transform: scale(0.95);
+}
+
+.quick-nav-emoji {
+  font-size: 36rpx;
+  margin-bottom: 6rpx;
+}
+
+.quick-nav-label {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ========== 行程预览 ========== */
+.day-header {
+  margin-top: 8rpx;
+}
+
+.day-badge {
+  font-size: var(--font-xs);
+  font-weight: 700;
+}
+
+.day-activity {
+  padding: 8rpx 0;
+  border-bottom: 1rpx dashed var(--border-color);
+}
+
+.day-activity:last-child {
+  border-bottom: none;
+}
+
+/* ========== 日记预览 ========== */
+.diary-preview {
+  padding: var(--spacing-lg);
+}
+
+/* ========== AI 建议 ========== */
+.tip-icon {
+  flex-shrink: 0;
+}
+
+/* ========== 空状态 ========== */
+.empty-wrap {
+  padding: 100rpx var(--spacing-lg);
+  text-align: center;
+}

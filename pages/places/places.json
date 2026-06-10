@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "景点清单",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "place-card": "../../components/place-card/place-card",
+    "empty-state": "../../components/empty-state/empty-state",
+    "loading-state": "../../components/loading-state/loading-state"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "每日行程",
+  "usingComponents": {
+    "day-plan-card": "../../components/day-plan-card/day-plan-card",
+    "empty-state": "../../components/empty-state/empty-state"
+  }
+}

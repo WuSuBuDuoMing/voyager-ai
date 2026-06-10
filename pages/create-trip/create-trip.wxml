@@ -1,0 +1,164 @@
+<!--
+  pages/create-trip/create-trip 创建旅行页
+  表单页，填写旅行信息后通过 AI 或手动创建行程
+-->
+<view class="page {{isDarkMode ? 'dark' : ''}}">
+  <view class="container">
+    <!-- ========== 目的地 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">📍 目的地 <text class="text-danger">*</text></view>
+      <view class="input-wrap">
+        <input
+          class="form-input"
+          placeholder="请输入目的地，如：日本东京"
+          value="{{form.destination}}"
+          bindinput="onInput"
+          data-field="destination"
+          maxlength="50"
+        />
+      </view>
+    </view>
+
+    <!-- ========== 出发日期 / 返回日期 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="date-row flex-row" style="gap: 16rpx;">
+        <view style="flex: 1;">
+          <view class="form-label font-md font-bold text-primary">📅 出发日期 <text class="text-danger">*</text></view>
+          <view class="input-wrap">
+            <picker mode="date" value="{{form.startDate}}" start="{{minDate}}" bindchange="onDateChange" data-field="startDate">
+              <view class="picker-text {{form.startDate ? 'text-primary' : 'text-hint'}} font-md">
+                {{form.startDate || '选择出发日期'}}
+              </view>
+            </picker>
+          </view>
+        </view>
+        <view style="flex: 1;">
+          <view class="form-label font-md font-bold text-primary">📅 返回日期 <text class="text-danger">*</text></view>
+          <view class="input-wrap">
+            <picker mode="date" value="{{form.endDate}}" start="{{form.startDate || minDate}}" bindchange="onDateChange" data-field="endDate">
+              <view class="picker-text {{form.endDate ? 'text-primary' : 'text-hint'}} font-md">
+                {{form.endDate || '选择返回日期'}}
+              </view>
+            </picker>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 出行人数 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">👥 出行人数</view>
+      <view class="stepper-wrap flex-row align-center">
+        <view class="stepper-btn flex-center {{form.peopleCount <= 1 ? 'disabled' : ''}}" bindtap="onStepDown">-</view>
+        <view class="stepper-value font-lg font-bold text-primary">{{form.peopleCount}}</view>
+        <view class="stepper-btn flex-center" bindtap="onStepUp">+</view>
+      </view>
+    </view>
+
+    <!-- ========== 总预算 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">💰 总预算 <text class="text-danger">*</text></view>
+      <view class="input-wrap flex-row align-center">
+        <text class="currency-prefix font-lg font-bold text-brand">¥</text>
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入预算金额"
+          value="{{form.totalBudget}}"
+          bindinput="onInput"
+          data-field="totalBudget"
+          style="flex: 1;"
+        />
+      </view>
+    </view>
+
+    <!-- ========== 旅行风格 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">🎨 旅行风格</view>
+      <view class="pill-grid">
+        <view
+          class="pill-item {{form.style === item.value ? 'active' : ''}}"
+          wx:for="{{styleOptions}}"
+          wx:key="value"
+          bindtap="onSelectStyle"
+          data-value="{{item.value}}"
+        >
+          <text>{{item.emoji}} {{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 每日节奏 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">⚡ 每日节奏</view>
+      <view class="pill-grid">
+        <view
+          class="pill-item pace-pill {{form.pace === item.value ? 'active' : ''}}"
+          wx:for="{{paceOptions}}"
+          wx:key="value"
+          bindtap="onSelectPace"
+          data-value="{{item.value}}"
+        >
+          <text>{{item.emoji}} {{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 住宿区域 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">🏨 住宿区域</view>
+      <view class="input-wrap">
+        <input
+          class="form-input"
+          placeholder="选填，如：新宿、西湖区"
+          value="{{form.accommodationArea}}"
+          bindinput="onInput"
+          data-field="accommodationArea"
+          maxlength="50"
+        />
+      </view>
+    </view>
+
+    <!-- ========== 备注 ========== -->
+    <view class="form-section animate-fade-in">
+      <view class="form-label font-md font-bold text-primary">📝 备注</view>
+      <view class="input-wrap">
+        <textarea
+          class="form-textarea"
+          placeholder="其他旅行需求或想法..."
+          value="{{form.notes}}"
+          bindinput="onInput"
+          data-field="notes"
+          maxlength="500"
+          auto-height
+        />
+      </view>
+    </view>
+
+    <!-- 底部间距 -->
+    <view style="height: 280rpx;"></view>
+  </view>
+
+  <!-- ========== 底部操作栏 ========== -->
+  <view class="bottom-bar">
+    <view class="btn btn-primary btn-block btn-lg generate-btn" bindtap="onGenerateAI" loading="{{generating}}">
+      <text wx:if="{{!generating}}">🤖 AI 智能生成行程</text>
+      <text wx:else>🤖 AI 正在规划中...</text>
+    </view>
+    <view class="btn btn-secondary btn-block mt-sm" bindtap="onSubmitManual" disabled="{{generating}}">
+      📝 手动创建
+    </view>
+  </view>
+
+  <!-- 生成中的全屏遮罩 -->
+  <view class="generating-mask flex-center flex-col" wx:if="{{generating}}">
+    <view class="generating-icon animate-pulse">🤖</view>
+    <view class="generating-title font-lg font-bold text-primary mt-md">AI 正在为您规划行程</view>
+    <view class="generating-desc font-sm text-secondary mt-sm">正在分析目的地、匹配最佳行程...</view>
+    <view class="generating-dots mt-md">
+      <view class="dot"></view>
+      <view class="dot"></view>
+      <view class="dot"></view>
+    </view>
+  </view>
+</view>

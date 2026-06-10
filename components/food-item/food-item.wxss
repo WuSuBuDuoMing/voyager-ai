@@ -1,0 +1,119 @@
+.food-card {
+  display: flex;
+  flex-direction: row;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+  box-shadow: 0 2rpx 12rpx var(--shadow-color);
+}
+
+.food-card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.food-image {
+  width: 220rpx;
+  height: 260rpx;
+  flex-shrink: 0;
+}
+
+.food-info {
+  flex: 1;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.food-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.food-name {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+  margin-right: var(--spacing-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.food-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.food-price {
+  font-size: var(--font-sm);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  color: #F59E0B;
+  font-size: var(--font-sm);
+  margin-right: 4rpx;
+}
+
+.rating-num {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.food-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+
+.mini-tag {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  background: var(--bg-primary);
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+}
+
+.food-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  transition: opacity 0.2s ease;
+}
+
+.action-btn:active {
+  opacity: 0.7;
+}
+
+.action-btn.active {
+  color: var(--danger);
+}
+
+.action-btn.eaten {
+  color: var(--brand-primary);
+}

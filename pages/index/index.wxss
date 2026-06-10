@@ -1,0 +1,239 @@
+/**
+ * pages/index/index.wxss 首页样式
+ */
+
+/* 页面容器 */
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* ========== 渐变头部 ========== */
+.header {
+  padding-top: 80rpx; /* 状态栏安全区 */
+  padding-bottom: 40rpx;
+}
+
+.header-content {
+  padding: 0 var(--spacing-lg);
+}
+
+.greeting {
+  color: #FFFFFF;
+}
+
+.date-text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.avatar-wrap {
+  margin-left: var(--spacing-lg);
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+}
+
+.avatar-text {
+  font-size: 40rpx;
+}
+
+/* ========== 页面可滚动区域 ========== */
+.page-scroll {
+  height: calc(100vh - 300rpx);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ========== 统计卡片行 ========== */
+.stats-section {
+  margin-top: -30rpx;
+  padding: 0 var(--spacing-md);
+  position: relative;
+  z-index: 2;
+}
+
+.stats-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.stats-row {
+  display: inline-flex;
+  gap: 16rpx;
+  padding: 4rpx 4rpx 8rpx;
+}
+
+.stat-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 160rpx;
+  padding: 20rpx 24rpx;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4rpx 20rpx var(--shadow-color);
+}
+
+.stat-icon {
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
+}
+
+.stat-value {
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  white-space: nowrap;
+  margin-top: 4rpx;
+}
+
+/* ========== 区块通用 ========== */
+.section {
+  padding: 0 var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+/* ========== 倒计时卡片 ========== */
+.countdown-card {
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.countdown-cover {
+  position: relative;
+  height: 320rpx;
+  width: 100%;
+}
+
+.countdown-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+}
+
+.countdown-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -65%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 4rpx solid rgba(255, 255, 255, 0.4);
+}
+
+.countdown-num {
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.countdown-unit {
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 4rpx;
+}
+
+.countdown-info {
+  position: absolute;
+  bottom: 24rpx;
+  left: 24rpx;
+  right: 24rpx;
+}
+
+.countdown-dest {
+  display: block;
+}
+
+.countdown-date {
+  display: block;
+  margin-top: 4rpx;
+}
+
+/* ========== 今日行程 ========== */
+.today-plan-card {
+  padding: var(--spacing-lg);
+}
+
+.today-activity {
+  padding: 10rpx 0;
+  border-bottom: 1rpx dashed var(--border-color);
+}
+
+.today-activity:last-child {
+  border-bottom: none;
+}
+
+/* ========== 空状态提示 ========== */
+.empty-hint {
+  min-height: 120rpx;
+}
+
+/* ========== 预算进度条 ========== */
+.budget-progress-bar {
+  height: 12rpx;
+  border-radius: 6rpx;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.budget-progress-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  transition: width 0.6s ease;
+}
+
+/* ========== 打包进度环 ========== */
+.packing-ring-wrap {
+  width: 120rpx;
+  height: 120rpx;
+  flex-shrink: 0;
+}
+
+/* ========== 快捷操作网格 ========== */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.quick-action-item {
+  padding: 24rpx 16rpx;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2rpx 12rpx var(--shadow-color);
+  background: var(--bg-card);
+  transition: all 0.3s ease;
+}
+
+.quick-action-item:active {
+  transform: scale(0.95);
+}
+
+.action-emoji {
+  font-size: 48rpx;
+}
+
+.action-label {
+  text-align: center;
+}

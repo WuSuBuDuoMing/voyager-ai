@@ -1,0 +1,26 @@
+<view class="place-card" bind:tap="onTap">
+  <image class="place-image" src="{{place.image}}" mode="aspectFill" lazy-load />
+  <view class="place-info">
+    <view class="place-header">
+      <text class="place-name">{{place.name}}</text>
+      <text class="tag tag-green">{{place.type}}</text>
+    </view>
+    <view class="place-meta">
+      <view class="rating">
+        <text class="star">★</text>
+        <text class="rating-num">{{place.rating}}</text>
+      </view>
+      <text class="price" wx:if="{{place.price > 0}}">¥{{place.price}}</text>
+      <text class="price free" wx:else>免费</text>
+    </view>
+    <view class="place-actions">
+      <view class="action-btn {{place.favorite ? 'active' : ''}}" catch:tap="onFavorite">
+        <text>{{place.favorite ? '❤️' : '🤍'}}</text>
+      </view>
+      <view class="action-btn visited-btn {{place.visited ? 'active' : ''}}" catch:tap="onVisited">
+        <text class="visited-icon">{{place.visited ? '✅' : '⬜'}}</text>
+        <text class="visited-text">{{place.visited ? '已去' : '未去'}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,158 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <!-- 头部 -->
+  <view class="page-header">
+    <text class="page-title">旅行日记</text>
+    <text class="page-subtitle">记录旅途中的美好瞬间</text>
+  </view>
+
+  <!-- 行程筛选 -->
+  <scroll-view class="filter-scroll" scroll-x enable-flex wx:if="{{trips.length > 0}}">
+    <view class="filter-tabs">
+      <view
+        class="filter-tab {{selectedTripId === '' ? 'active' : ''}}"
+        data-id=""
+        bind:tap="onTripSelect"
+      >
+        <text>全部行程</text>
+      </view>
+      <view
+        class="filter-tab {{selectedTripId === item.id ? 'active' : ''}}"
+        wx:for="{{trips}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bind:tap="onTripSelect"
+      >
+        <text>{{item.destination}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 加载状态 -->
+  <loading-state wx:if="{{loading}}" text="加载日记中..." />
+
+  <!-- 时间线视图 -->
+  <view class="timeline" wx:elif="{{diaries.length > 0}}">
+    <view class="timeline-item" wx:for="{{diaries}}" wx:key="id">
+      <view class="timeline-node">
+        <view class="node-day">{{index + 1}}</view>
+        <view class="node-line" wx:if="{{index < diaries.length - 1}}"></view>
+      </view>
+      <view class="timeline-card" bind:tap="onDiaryTap">
+        <view class="card-header">
+          <text class="card-date">{{item.date}}</text>
+          <text class="card-mood">{{item.moodEmoji || '😊'}}</text>
+        </view>
+        <text class="card-title">{{item.title}}</text>
+        <text class="card-content">{{item.content}}</text>
+        <view class="photo-grid" wx:if="{{item.photos && item.photos.length > 0}}">
+          <image class="photo-thumb" wx:for="{{item.photos}}" wx:for-item="photo" wx:for-index="pIdx" wx:key="*this" wx:if="{{pIdx < 4}}" src="{{photo}}" mode="aspectFill" />
+        </view>
+        <view class="card-stats">
+          <text class="stat" wx:if="{{item.weather}}">{{item.weather}}</text>
+          <text class="stat" wx:if="{{item.cost}}">💰 ¥{{item.cost}}</text>
+          <text class="stat" wx:if="{{item.steps}}">👣 {{item.steps}}步</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:elif="{{!loading && diaries.length === 0}}"
+    icon="📝"
+    title="暂无旅行日记"
+    subtitle="点击右下角按钮开始记录"
+  />
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab-btn" bind:tap="onShowCreate">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 创建日记弹窗 -->
+  <view class="modal-mask" wx:if="{{showCreateModal}}" bind:tap="onCloseCreate">
+    <view class="modal-content" catch:tap="">
+      <view class="modal-header">
+        <text class="modal-title">写日记</text>
+        <text class="modal-close" bind:tap="onCloseCreate">✕</text>
+      </view>
+
+      <!-- 标题 -->
+      <text class="modal-label">标题</text>
+      <input class="modal-input" placeholder="给今天起个标题" value="{{newDiary.title}}" bindinput="onTitleInput" />
+
+      <!-- 内容 -->
+      <text class="modal-label">内容</text>
+      <textarea class="modal-textarea" placeholder="记录今天的旅程..." value="{{newDiary.content}}" bindinput="onContentInput" maxlength="-1" auto-height />
+
+      <!-- 照片区域（占位） -->
+      <text class="modal-label">照片</text>
+      <view class="photo-upload">
+        <view class="upload-placeholder">
+          <text class="upload-icon">📷</text>
+          <text class="upload-text">添加照片</text>
+        </view>
+      </view>
+
+      <!-- 心情选择 -->
+      <text class="modal-label">今日心情</text>
+      <view class="emoji-row">
+        <view
+          class="emoji-item {{newDiary.mood === item.key ? 'active' : ''}}"
+          wx:for="{{moodOptions}}"
+          wx:key="key"
+          data-mood="{{item.key}}"
+          bind:tap="onMoodSelect"
+        >
+          <text class="emoji">{{item.emoji}}</text>
+          <text class="emoji-label">{{item.label}}</text>
+        </view>
+      </view>
+
+      <!-- 天气选择 -->
+      <text class="modal-label">今日天气</text>
+      <view class="emoji-row">
+        <view
+          class="emoji-item {{newDiary.weather === item.key ? 'active' : ''}}"
+          wx:for="{{weatherOptions}}"
+          wx:key="key"
+          data-weather="{{item.key}}"
+          bind:tap="onWeatherSelect"
+        >
+          <text class="emoji">{{item.emoji}}</text>
+          <text class="emoji-label">{{item.label}}</text>
+        </view>
+      </view>
+
+      <!-- 日期和行程选择 -->
+      <view class="row-2col">
+        <view class="col-half">
+          <text class="modal-label">日期</text>
+          <picker mode="date" value="{{newDiary.date}}" bindchange="onDateChange">
+            <view class="modal-input picker-display">{{newDiary.date}}</view>
+          </picker>
+        </view>
+        <view class="col-half">
+          <text class="modal-label">所属行程</text>
+          <picker range="{{trips}}" range-key="destination" bindchange="onTripChange">
+            <view class="modal-input picker-display">选择行程</view>
+          </picker>
+        </view>
+      </view>
+
+      <!-- 费用和步数 -->
+      <view class="row-2col">
+        <view class="col-half">
+          <text class="modal-label">今日花费 (¥)</text>
+          <input class="modal-input" type="digit" placeholder="0" value="{{newDiary.cost}}" bindinput="onCostInput" />
+        </view>
+        <view class="col-half">
+          <text class="modal-label">今日步数</text>
+          <input class="modal-input" type="number" placeholder="0" value="{{newDiary.steps}}" bindinput="onStepsInput" />
+        </view>
+      </view>
+
+      <button class="btn btn-primary btn-block mt-lg" bind:tap="onSaveDiary">保存日记</button>
+    </view>
+  </view>
+</view>

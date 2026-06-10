@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "旅行日记",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "diary-card": "../../components/diary-card/diary-card",
+    "empty-state": "../../components/empty-state/empty-state",
+    "loading-state": "../../components/loading-state/loading-state"
+  }
+}

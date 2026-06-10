@@ -1,0 +1,196 @@
+/* ai-suggestion-card AI建议卡片样式 */
+
+/* 卡片容器 - 带渐变边框效果 */
+.ai-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 4rpx 20rpx var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+  border: 2rpx solid transparent;
+  border-image: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899) 1;
+  /* 注意: border-image 不支持圆角，改用伪元素渐变边框 */
+  border: none;
+}
+
+/* 渐变边框用伪元素实现 */
+.ai-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
+}
+
+/* 头部 */
+.ai-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* AI图标容器 */
+.ai-icon-wrap {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.12));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ai-icon {
+  font-size: 36rpx;
+}
+
+/* 标题区域 */
+.ai-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-label {
+  font-size: var(--font-xs);
+  color: var(--info);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2rpx;
+}
+
+.ai-title {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 建议内容 */
+.ai-content {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+}
+
+.content-text {
+  font-size: var(--font-md);
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+/* 推荐理由 */
+.ai-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: rgba(245, 158, 11, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.reason-icon {
+  font-size: var(--font-md);
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.reason-text {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* 置信度区域 */
+.confidence-section {
+  margin-bottom: var(--spacing-md);
+}
+
+.confidence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.confidence-label {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+}
+
+.confidence-value {
+  font-size: var(--font-xs);
+  color: var(--info);
+  font-weight: 600;
+}
+
+.confidence-bar {
+  width: 100%;
+  height: 8rpx;
+  background: var(--border-color);
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 4rpx;
+  background: linear-gradient(90deg, #3B82F6, #8B5CF6);
+  transition: width 0.6s ease;
+}
+
+/* 操作按钮区域 */
+.ai-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: opacity 0.2s ease;
+}
+
+.action-btn:active {
+  opacity: 0.7;
+}
+
+/* 采纳按钮 */
+.accept-btn {
+  background: var(--brand-primary);
+}
+
+.accept-btn .action-text {
+  color: #FFFFFF;
+  font-size: var(--font-sm);
+  font-weight: 500;
+}
+
+/* 忽略按钮 */
+.dismiss-btn {
+  background: var(--bg-primary);
+}
+
+.dismiss-btn .action-text {
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+
+.action-icon {
+  font-size: var(--font-sm);
+}

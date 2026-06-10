@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的",
+  "usingComponents": {
+    "loading-state": "../../components/loading-state/loading-state"
+  }
+}
