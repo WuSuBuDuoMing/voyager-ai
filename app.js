@@ -5,7 +5,7 @@ App({
   globalData: {
     userInfo: null,
     isDarkMode: false,
-    version: '1.0.0',
+    version: '1.1.0',
     systemInfo: null
   },
 

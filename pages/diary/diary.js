@@ -55,7 +55,9 @@ Page({
   async loadDiaries() {
     this.setData({ loading: true })
     try {
-      const diaries = await diaryService.getDiaries(this.data.selectedTripId)
+      const diaries = this.data.selectedTripId
+        ? diaryService.getDiariesByTripId(this.data.selectedTripId)
+        : diaryService.getAllDiaries()
       this.setData({ diaries, loading: false })
     } catch (e) {
       console.error('加载日记失败', e)
@@ -134,7 +136,7 @@ Page({
     const moodEmoji = this.data.moodOptions.find(m => m.key === newDiary.mood)
     const weatherEmoji = this.data.weatherOptions.find(w => w.key === newDiary.weather)
 
-    await diaryService.addDiary({
+    diaryService.createDiary({
       tripId: newDiary.tripId,
       title: newDiary.title.trim(),
       content: newDiary.content.trim(),

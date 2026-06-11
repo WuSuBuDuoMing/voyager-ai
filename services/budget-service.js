@@ -6,6 +6,7 @@
 
 const { getStorage, setStorage } = require('../utils/storage-utils')
 const { generateId } = require('../utils/mock-utils')
+const { MOCK_TRIPS } = require('../data/mock-trips')
 const BUDGET_KEY = 'budgets'
 const EXPENSE_KEY = 'expenses'
 
@@ -47,7 +48,6 @@ const BUDGET_CATEGORIES = [
  * @returns {Promise<Object>} 预算概览
  */
 async function getBudgetOverview(tripId) {
-  const { MOCK_TRIPS } = require('../data/mock-trips')
   const trip = MOCK_TRIPS.find(t => t.id === tripId)
   const expenses = await getExpenses(tripId)
   const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0)

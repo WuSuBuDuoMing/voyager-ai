@@ -43,7 +43,7 @@ Page({
   async loadFoods() {
     this.setData({ loading: true })
     try {
-      const foods = await foodService.getFoods(this.data.tripId)
+      const foods = foodService.getFoodByTripId(this.data.tripId)
       this.setData({ foods, loading: false })
       this.filterFoods()
     } catch (e) {

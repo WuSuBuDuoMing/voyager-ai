@@ -663,6 +663,195 @@ describe('行李服务 - packingService', () => {
   assert.ok(categories.some(c => c.key === '全部'), 'getCategories 包含"全部"分类')
 })
 
+// -------------------------------------------------------
+// 11. 行程生成服务
+// -------------------------------------------------------
+describe('行程生成服务 - itineraryService', () => {
+  const { generateMockItinerary, getItineraryByTripId, getDayPlan, createDayPlan, updateDayPlan, deleteDayPlan } = require('../services/itinerary-service')
+
+  // generateMockItinerary 测试
+  const itinerary = generateMockItinerary('trip_test', {
+    destination: '东京',
+    startDate: '2026-07-15',
+    endDate: '2026-07-20',
+    style: 'normal'
+  })
+  assert.ok(Array.isArray(itinerary), 'generateMockItinerary 返回数组')
+  assert.equal(itinerary.length, 6, 'generateMockItinerary 6天行程生成6条')
+  assert.equal(itinerary[0].tripId, 'trip_test', 'generateMockItinerary tripId正确')
+  assert.equal(itinerary[0].dayIndex, 1, 'generateMockItinerary 第一天dayIndex=1')
+  assert.equal(itinerary[5].dayIndex, 6, 'generateMockItinerary 最后一天dayIndex=6')
+  assert.ok(Array.isArray(itinerary[0].morning), 'generateMockItinerary morning为数组')
+  assert.ok(Array.isArray(itinerary[0].afternoon), 'generateMockItinerary afternoon为数组')
+  assert.ok(Array.isArray(itinerary[0].evening), 'generateMockItinerary evening为数组')
+  assert.ok(itinerary[0].morning.length > 0, 'generateMockItinerary morning有内容')
+  assert.ok(typeof itinerary[0].estimatedCost === 'number', 'generateMockItinerary estimatedCost为数字')
+  assert.ok(itinerary[0].estimatedCost > 0, 'generateMockItinerary estimatedCost大于0')
+
+  // 不同风格的费用差异
+  const budgetItinerary = generateMockItinerary('trip_b', {
+    destination: '巴黎', startDate: '2026-08-01', endDate: '2026-08-03', style: 'budget'
+  })
+  const luxuryItinerary = generateMockItinerary('trip_c', {
+    destination: '巴黎', startDate: '2026-08-01', endDate: '2026-08-03', style: 'luxury'
+  })
+  assert.ok(luxuryItinerary[0].estimatedCost > budgetItinerary[0].estimatedCost,
+    'generateMockItinerary 奢华风格费用高于经济风格')
+
+  // 未知目的地应使用通用模板
+  const genericItinerary = generateMockItinerary('trip_d', {
+    destination: '未知城市', startDate: '2026-09-01', endDate: '2026-09-02', style: 'normal'
+  })
+  assert.ok(genericItinerary.length === 2, 'generateMockItinerary 未知目的地也能生成行程')
+
+  // 首日和末日特殊处理
+  assert.ok(itinerary[0].morning.some(a => a.includes('抵达')), 'generateMockItinerary 首日包含抵达')
+  assert.ok(itinerary[5].evening.some(a => a.includes('返程') || a.includes('结束')), 'generateMockItinerary 末日包含返程')
+
+  // getItineraryByTripId 测试
+  const tokyoItinerary = getItineraryByTripId('trip_001')
+  assert.ok(Array.isArray(tokyoItinerary), 'getItineraryByTripId 返回数组')
+  if (tokyoItinerary.length > 1) {
+    assert.ok(tokyoItinerary[0].dayIndex <= tokyoItinerary[1].dayIndex,
+      'getItineraryByTripId 按dayIndex升序排列')
+  }
+
+  // getDayPlan 测试
+  const day1 = getDayPlan('trip_001', 1)
+  if (day1) {
+    assert.equal(day1.dayIndex, 1, 'getDayPlan 返回正确的dayIndex')
+    assert.equal(day1.tripId, 'trip_001', 'getDayPlan 返回正确的tripId')
+  }
+  assert.equal(getDayPlan('trip_001', 999), null, 'getDayPlan 不存在返回null')
+})
+
+// -------------------------------------------------------
+// 12. 预算跟踪服务
+// -------------------------------------------------------
+describe('预算跟踪服务 - budgetService', () => {
+  const budgetService = require('../services/budget-service')
+
+  // getBudgetOverview 测试
+  budgetService.getBudgetOverview('trip_001').then(overview => {
+    assert.ok(typeof overview.totalBudget === 'number', 'getBudgetOverview totalBudget为数字')
+    assert.ok(typeof overview.totalSpent === 'number', 'getBudgetOverview totalSpent为数字')
+    assert.ok(typeof overview.remaining === 'number', 'getBudgetOverview remaining为数字')
+    assert.ok(typeof overview.percentage === 'number', 'getBudgetOverview percentage为数字')
+    assert.ok(overview.totalBudget > 0, 'getBudgetOverview 总预算大于0')
+    assert.ok(overview.totalSpent >= 0, 'getBudgetOverview 已花费非负')
+    assert.equal(overview.remaining, overview.totalBudget - overview.totalSpent, 'getBudgetOverview remaining=total-totalSpent')
+    assert.ok(Array.isArray(overview.categoryBreakdown), 'getBudgetOverview categoryBreakdown为数组')
+    assert.ok(overview.categoryBreakdown.length > 0, 'getBudgetOverview 有分类明细')
+    assert.ok(typeof overview.dailyAverage === 'number', 'getBudgetOverview dailyAverage为数字')
+
+    // 分类明细验证
+    overview.categoryBreakdown.forEach(cat => {
+      assert.ok(cat.key, 'getBudgetOverview 分类有key')
+      assert.ok(cat.label, 'getBudgetOverview 分类有label')
+      assert.ok(typeof cat.amount === 'number', 'getBudgetOverview 分类金额为数字')
+      assert.ok(typeof cat.percentage === 'number', 'getBudgetOverview 分类百分比为数字')
+    })
+  })
+
+  // getExpenses 测试
+  budgetService.getExpenses('trip_001').then(expenses => {
+    assert.ok(Array.isArray(expenses), 'getExpenses 返回数组')
+    assert.ok(expenses.length > 0, 'getExpenses trip_001有数据')
+    expenses.forEach(e => {
+      assert.ok(e.id, 'getExpenses 每条有id')
+      assert.equal(e.tripId, 'trip_001', 'getExpenses tripId正确')
+      assert.ok(typeof e.amount === 'number', 'getExpenses amount为数字')
+      assert.ok(e.amount > 0, 'getExpenses amount大于0')
+      assert.ok(e.category, 'getExpenses 有category')
+      assert.ok(e.date, 'getExpenses 有date')
+    })
+
+    // 按日期降序
+    if (expenses.length > 1) {
+      assert.ok(new Date(expenses[0].date) >= new Date(expenses[1].date),
+        'getExpenses 按日期降序排列')
+    }
+  })
+
+  // getExpenses 不存在的行程
+  budgetService.getExpenses('nonexistent_trip').then(expenses => {
+    assert.ok(Array.isArray(expenses), 'getExpenses 不存在的行程返回空数组')
+    assert.equal(expenses.length, 0, 'getExpenses 不存在的行程数据为空')
+  })
+
+  // addExpense / deleteExpense 测试
+  budgetService.addExpense({
+    tripId: 'trip_test', category: 'food', description: '测试消费', amount: 100, date: '2026-06-11'
+  }).then(newExpense => {
+    assert.ok(newExpense.id, 'addExpense 返回的记录有id')
+    assert.equal(newExpense.tripId, 'trip_test', 'addExpense tripId正确')
+    assert.equal(newExpense.amount, 100, 'addExpense amount正确')
+
+    return budgetService.deleteExpense(newExpense.id)
+  }).then(result => {
+    assert.equal(result, true, 'deleteExpense 返回true')
+  })
+})
+
+// -------------------------------------------------------
+// 13. 行李清单服务
+// -------------------------------------------------------
+describe('行李清单服务 - packingService 详细', () => {
+  const packingService = require('../services/packing-service')
+
+  // getPackingList 测试
+  packingService.getPackingList('trip_001').then(list => {
+    assert.ok(Array.isArray(list), 'getPackingList 返回数组')
+    assert.ok(list.length > 0, 'getPackingList trip_001有数据')
+    list.forEach(item => {
+      assert.ok(item.id, 'getPackingList 每项有id')
+      assert.equal(item.tripId, 'trip_001', 'getPackingList tripId正确')
+      assert.ok(item.name, 'getPackingList 每项有name')
+      assert.ok(item.category, 'getPackingList 每项有category')
+      assert.ok(typeof item.checked === 'boolean', 'getPackingList checked为布尔值')
+      assert.ok(typeof item.quantity === 'number', 'getPackingList quantity为数字')
+    })
+
+    // 验证分类
+    const categories = [...new Set(list.map(i => i.category))]
+    assert.ok(categories.length > 1, 'getPackingList 包含多个分类')
+    assert.ok(categories.includes('证件'), 'getPackingList 包含证件分类')
+  })
+
+  // getPackingList 不存在的行程
+  packingService.getPackingList('nonexistent_trip').then(list => {
+    assert.ok(Array.isArray(list), 'getPackingList 不存在的行程返回空数组')
+    assert.equal(list.length, 0, 'getPackingList 不存在的行程数据为空')
+  })
+
+  // addItem / toggleItem / deleteItem 测试
+  packingService.addItem({
+    tripId: 'trip_test', name: '测试物品', category: '其他', quantity: 1
+  }).then(newItem => {
+    assert.ok(newItem.id, 'addItem 返回的物品有id')
+    assert.equal(newItem.name, '测试物品', 'addItem name正确')
+    assert.equal(newItem.checked, false, 'addItem 默认未勾选')
+
+    return packingService.toggleItem(newItem.id)
+  }).then(toggled => {
+    assert.ok(toggled, 'toggleItem 返回物品')
+    assert.equal(toggled.checked, true, 'toggleItem 切换为已勾选')
+
+    return packingService.toggleItem(toggled.id)
+  }).then(toggledBack => {
+    assert.equal(toggledBack.checked, false, 'toggleItem 再次切换为未勾选')
+
+    return packingService.deleteItem(toggledBack.id)
+  }).then(result => {
+    assert.equal(result, true, 'deleteItem 返回true')
+  })
+
+  // toggleItem 不存在的物品
+  packingService.toggleItem('nonexistent_id').then(result => {
+    assert.equal(result, null, 'toggleItem 不存在返回null')
+  })
+})
+
 // ====== 测试结果汇总 ======
 console.log('\n' + '='.repeat(50))
 console.log(`📊 测试结果: ${passCount} 通过 / ${failCount} 失败 / ${passCount + failCount} 总计`)

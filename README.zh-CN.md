@@ -127,8 +127,15 @@ ai-travel-assistant/
 │       ├── trip-card.wxml          # 组件模板（封面图、预算进度、打包进度）
 │       └── trip-card.wxss          # 组件样式
 │
-├── data/
-│   └── mock-trips.js               # 15 条模拟行程数据（覆盖多种目的地和状态）
+├── data/                            # Mock 数据
+│   ├── mock-trips.js               # 15 条模拟行程数据（覆盖多种目的地和状态）
+│   ├── mock-itinerary.js           # 60 条每日行程
+│   ├── mock-places.js              # 80 条景点
+│   ├── mock-food.js                # 50 条美食
+│   ├── mock-budget.js              # 80 条预算消费
+│   ├── mock-packing.js             # 100 条行李
+│   ├── mock-diary.js               # 30 条日记
+│   └── mock-ai.js                  # AI 生成结果
 │
 ├── docs/                           # 项目文档
 │
@@ -146,7 +153,14 @@ ai-travel-assistant/
 │   └── profile/                    # 个人中心页
 │
 ├── services/
-│   └── place-service.js            # 景点服务（CRUD、收藏、访问状态管理）
+│   ├── trip-service.js             # 旅行计划 CRUD 服务
+│   ├── itinerary-service.js        # 行程安排 CRUD + AI 生成
+│   ├── budget-service.js           # 预算与消费管理
+│   ├── packing-service.js          # 行李清单管理
+│   ├── diary-service.js            # 旅行日记 CRUD
+│   ├── food-service.js             # 美食攻略服务
+│   ├── place-service.js            # 景点管理服务
+│   └── mock-ai-service.js          # 模拟 AI 服务
 │
 ├── tests/                          # 测试文件
 │   └── test-cases.js               # 自动化测试用例
@@ -173,7 +187,7 @@ ai-travel-assistant/
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-username/ai-travel-assistant.git
+git clone https://github.com/WuSuBuDuoMing/voyager-ai.git
 
 # 2. 打开微信开发者工具
 
@@ -255,31 +269,144 @@ git clone https://github.com/your-username/ai-travel-assistant.git
 | `trip-card` | 旅行概览卡片 | `onTap` |
 | `day-plan-card` | 每日行程卡片（早/中/晚） | `onTap` |
 | `place-card` | 景点信息卡片 | `onTap` / `onFavorite` / `onVisit` |
-| `budget-card` | 预算消费记录卡片 | - |
-| `food-item` | 美食列表项 | - |
-| `packing-item` | 行李清单项 | - |
-| `diary-card` | 旅行日记卡片 | - |
+| `budget-card` | 预算消费记录卡片 | `onDelete` |
+| `food-item` | 美食列表项 | `onTap` / `onFavorite` / `onEaten` |
+| `packing-item` | 行李清单项 | `onToggle` / `onDelete` |
+| `diary-card` | 旅行日记卡片 | `onTap` |
 | `progress-ring` | 环形进度条 | - |
 | `empty-state` | 空状态占位 | - |
 | `loading-state` | 加载状态 | - |
-| `ai-suggestion-card` | AI 建议卡片 | - |
+| `ai-suggestion-card` | AI 建议卡片 | `onAccept` / `onDismiss` |
 
 ---
 
 ## 🔧 服务层
 
-### place-service（景点服务）
-
-基于本地存储的景点 CRUD 服务，提供以下方法：
+### trip-service（旅行计划服务）
 
 | 方法 | 说明 |
 |------|------|
-| `getPlaces(tripId)` | 获取指定行程的所有景点 |
-| `addPlace(place)` | 添加新景点 |
-| `updatePlace(id, updates)` | 更新景点信息 |
+| `getAllTrips()` | 获取所有旅行计划 |
+| `getTripById(id)` | 根据 ID 获取旅行 |
+| `createTrip(data)` | 创建新旅行 |
+| `updateTrip(id, updates)` | 更新旅行信息 |
+| `deleteTrip(id)` | 删除旅行 |
+| `searchTrips(keyword)` | 按关键词搜索 |
+| `filterTripsByStatus(status)` | 按状态筛选 |
+| `updateTripBudget(id, spent)` | 更新已花费预算 |
+
+### itinerary-service（行程服务）
+
+| 方法 | 说明 |
+|------|------|
+| `getItineraryByTripId(tripId)` | 获取行程的所有每日安排 |
+| `getDayPlan(tripId, dayIndex)` | 获取某一天的行程 |
+| `createDayPlan(data)` | 创建日程 |
+| `updateDayPlan(id, updates)` | 更新日程 |
+| `deleteDayPlan(id)` | 删除日程 |
+| `generateMockItinerary(tripId, tripData)` | AI 生成模拟行程 |
+
+### budget-service（预算服务）
+
+| 方法 | 说明 |
+|------|------|
+| `getBudgetOverview(tripId)` | 获取预算概览（含分类明细） |
+| `getExpenses(tripId)` | 获取消费记录列表 |
+| `addExpense(expense)` | 添加消费记录 |
+| `deleteExpense(id)` | 删除消费记录 |
+| `getCategories()` | 获取预算分类配置 |
+
+### packing-service（行李服务）
+
+| 方法 | 说明 |
+|------|------|
+| `getPackingList(tripId)` | 获取行李清单 |
+| `addItem(item)` | 添加行李物品 |
+| `toggleItem(id)` | 切换打包状态 |
+| `deleteItem(id)` | 删除物品 |
+| `getCategories()` | 获取行李分类配置 |
+
+### diary-service（日记服务）
+
+| 方法 | 说明 |
+|------|------|
+| `getDiariesByTripId(tripId)` | 获取指定旅行的日记 |
+| `getDiaryById(id)` | 获取单篇日记 |
+| `getAllDiaries()` | 获取所有日记 |
+| `createDiary(data)` | 创建日记 |
+| `updateDiary(id, updates)` | 更新日记 |
+| `deleteDiary(id)` | 删除日记 |
+| `getMoodOptions()` | 获取心情选项 |
+| `getWeatherOptions()` | 获取天气选项 |
+
+### food-service（美食服务）
+
+| 方法 | 说明 |
+|------|------|
+| `getFoodByTripId(tripId)` | 获取旅行的美食列表 |
+| `getFoodById(id)` | 获取美食详情 |
+| `toggleFavorite(id)` | 切换收藏状态 |
+| `toggleEaten(id)` | 切换已吃状态 |
+| `addFoodReview(id, review)` | 添加评价 |
+| `getFavoriteFoods(tripId)` | 获取收藏美食 |
+
+### place-service（景点服务）
+
+| 方法 | 说明 |
+|------|------|
+| `getPlaces(tripId)` | 获取景点列表 |
+| `addPlace(place)` | 添加景点 |
+| `updatePlace(id, updates)` | 更新景点 |
 | `deletePlace(id)` | 删除景点 |
 | `toggleFavorite(id)` | 切换收藏状态 |
 | `toggleVisited(id)` | 切换已访问状态 |
+
+### mock-ai-service（AI 服务）
+
+| 方法 | 说明 |
+|------|------|
+| `generateTripPlan(params)` | 生成完整旅行计划 |
+| `generateRecommendations(destination, type)` | 生成目的地推荐 |
+| `generateMemoryText(diaryContent)` | 生成旅行回忆文案 |
+
+---
+
+## 📊 数据模型
+
+### Trip（旅行计划）
+```js
+{ id, destination, startDate, endDate, totalBudget, spentBudget, style, pace, peopleCount, notes, coverImage, status, packingProgress, diaryCount, placeCount, foodCount, createdAt }
+```
+
+### Itinerary Day（每日行程）
+```js
+{ id, tripId, dayIndex, date, title, morning[], afternoon[], evening[], estimatedCost, actualCost, transport, tips[], backupPlan }
+```
+
+### Expense（消费记录）
+```js
+{ id, tripId, category, description, amount, date }
+```
+
+### Packing Item（行李物品）
+```js
+{ id, tripId, name, category, quantity, checked }
+```
+
+### Diary（旅行日记）
+```js
+{ id, tripId, title, content, date, mood, weather, cost, steps, photos[] }
+```
+
+### Food（美食）
+```js
+{ id, tripId, name, type, image, rating, priceRange, favorite, eaten, tags[], address, description, tips, reviews[] }
+```
+
+### Place（景点）
+```js
+{ id, tripId, name, type, image, rating, price, favorite, visited, address, description }
+```
 
 ---
 
@@ -342,7 +469,7 @@ require('./tests/test-cases.js')
 
 ## 🗺️ 路线图
 
-### v1.0（当前版本）
+### v1.0
 - [x] 旅行计划创建和管理
 - [x] AI 行程生成（Mock 数据）
 - [x] 预算管理
@@ -351,6 +478,13 @@ require('./tests/test-cases.js')
 - [x] 旅行日记
 - [x] 暗黑模式
 - [x] 首页仪表盘
+
+### v1.1（当前版本）
+- [x] 完善 JSDoc 文档注释
+- [x] 补充单元测试（行程生成、预算跟踪、行李清单）
+- [x] 修复已知代码问题
+- [x] 完善 README 和数据模型文档
+- [x] 添加 CHANGELOG
 
 ### v1.1
 - [ ] 接入真实 AI 接口（ChatGPT / 文心一言）
@@ -397,7 +531,7 @@ require('./tests/test-cases.js')
 
 ### 问题反馈
 
-- 通过 [GitHub Issues](https://github.com/your-username/ai-travel-assistant/issues) 提交问题
+- 通过 [GitHub Issues](https://github.com/WuSuBuDuoMing/voyager-ai/issues) 提交问题
 - 请详细描述问题复现步骤和环境信息
 
 ---
