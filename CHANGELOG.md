@@ -2,6 +2,13 @@
 
 All notable changes to Voyager AI will be documented in this file.
 
+## [1.2.0] - 2026-06-14
+
+### Changed
+- Local optimization and performance improvements
+- Documentation enhancement across project
+- Open-source infrastructure updates
+
 ## [1.1.0] - 2026-06-11
 
 ### Fixed
