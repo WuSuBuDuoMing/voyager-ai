@@ -2,6 +2,11 @@
 
 All notable changes to Voyager AI will be documented in this file.
 
+## [1.4.0] - 2026-06-14
+
+### Changed
+- Security policy, documentation enhancements, open-source best practices
+
 ## [1.2.0] - 2026-06-14
 
 ### Changed
