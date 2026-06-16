@@ -2,6 +2,11 @@
 
 All notable changes to Voyager AI will be documented in this file.
 
+## [1.6.0] - 2026-06-16
+
+### Changed
+- Added CODE_OF_CONDUCT.md, FUNDING.yml, CODEOWNERS, enhanced Issue/PR templates
+
 ## [1.4.0] - 2026-06-14
 
 ### Changed
