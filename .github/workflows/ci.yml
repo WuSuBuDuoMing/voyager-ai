@@ -12,6 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Validate app.json
         run: |
           echo "=== Validating app.json ==="
@@ -58,3 +63,65 @@ jobs:
               console.log('All ' + config.pages.length + ' pages have all 4 required files (.js, .json, .wxml, .wxss)');
             }
           "
+
+      - name: Validate project structure
+        run: |
+          echo "=== Validating project structure ==="
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            let errors = [];
+
+            // Check required root files
+            const requiredFiles = ['app.js', 'app.json', 'app.wxss', 'LICENSE'];
+            for (const file of requiredFiles) {
+              if (!fs.existsSync(file)) {
+                errors.push('MISSING: ' + file);
+              }
+            }
+
+            // Check services directory
+            const serviceDir = 'services';
+            if (fs.existsSync(serviceDir)) {
+              const services = fs.readdirSync(serviceDir).filter(f => f.endsWith('.js'));
+              console.log('Services found:', services.length);
+            } else {
+              errors.push('MISSING: services/ directory');
+            }
+
+            // Check utils directory
+            const utilsDir = 'utils';
+            if (fs.existsSync(utilsDir)) {
+              const utils = fs.readdirSync(utilsDir).filter(f => f.endsWith('.js'));
+              console.log('Utils found:', utils.length);
+            } else {
+              errors.push('MISSING: utils/ directory');
+            }
+
+            // Check components
+            const componentsDir = 'components';
+            if (fs.existsSync(componentsDir)) {
+              const components = fs.readdirSync(componentsDir);
+              console.log('Components found:', components.length);
+            } else {
+              errors.push('MISSING: components/ directory');
+            }
+
+            if (errors.length > 0) {
+              console.error('Validation failed:');
+              errors.forEach(e => console.error('  ' + e));
+              process.exit(1);
+            }
+            console.log('Project structure is valid.');
+          "
+
+      - name: Check for required documentation files
+        run: |
+          echo "=== Checking documentation files ==="
+          for file in README.md LICENSE CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md CHANGELOG.md; do
+            if [ ! -f "$file" ]; then
+              echo "WARNING: $file not found"
+            else
+              echo "FOUND: $file"
+            fi
+          done

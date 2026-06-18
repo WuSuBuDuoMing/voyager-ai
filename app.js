@@ -1,38 +1,65 @@
-// app.js - AI 旅行计划助手
+/**
+ * @fileoverview Voyager AI - AI-Powered Travel Planning Assistant
+ * WeChat Mini Program entry point. Handles global initialization including
+ * system info detection, theme management, and local storage setup.
+ *
+ * @module app
+ * @version 1.9.0
+ * @license MIT
+ * @author WuSuBuDuoMing
+ */
+
 const { getStorage, setStorage } = require('./utils/storage-utils')
 
+/**
+ * WeChat Mini Program App instance
+ * Manages global state for theme mode, user info, and system information
+ */
 App({
+  /** @type {Object} Global shared data accessible from all pages */
   globalData: {
+    /** @type {Object|null} Current user information */
     userInfo: null,
+    /** @type {boolean} Whether dark mode is currently active */
     isDarkMode: false,
-    version: '1.1.0',
+    /** @type {string} Application version number */
+    version: '1.9.0',
+    /** @type {Object|null} Device system information from wx.getSystemInfoSync() */
     systemInfo: null
   },
 
+  /**
+   * App lifecycle: called when the Mini Program is first launched.
+   * Initializes system info, theme, and local storage in sequence.
+   */
   onLaunch() {
-    // 获取系统信息
     this.getSystemInfo()
-    // 初始化暗黑模式
     this.initTheme()
-    // 初始化本地存储
     this.initStorage()
   },
 
-  // 获取系统信息
+  /**
+   * Retrieves device system information and detects initial theme.
+   * Populates globalData.systemInfo and sets initial isDarkMode.
+   * @private
+   */
   getSystemInfo() {
     try {
       const systemInfo = wx.getSystemInfoSync()
       this.globalData.systemInfo = systemInfo
-      // 检查是否支持暗黑模式
       if (systemInfo.theme) {
         this.globalData.isDarkMode = systemInfo.theme === 'dark'
       }
     } catch (e) {
-      console.error('获取系统信息失败', e)
+      console.error('[App] Failed to get system info:', e)
     }
   },
 
-  // 初始化主题
+  /**
+   * Initializes the application theme based on user preference.
+   * Reads saved preference from storage; defaults to 'auto' (follow system).
+   * @private
+   */
   initTheme() {
     const savedTheme = getStorage('theme_mode') || 'auto'
     if (savedTheme === 'dark') {
@@ -40,7 +67,6 @@ App({
     } else if (savedTheme === 'light') {
       this.globalData.isDarkMode = false
     } else {
-      // auto - 跟随系统
       try {
         const res = wx.getSystemInfoSync()
         this.globalData.isDarkMode = res.theme === 'dark'
@@ -50,9 +76,12 @@ App({
     }
   },
 
-  // 初始化本地存储
+  /**
+   * Initializes local storage for first-time users.
+   * Sets default values for theme preference and user statistics.
+   * @private
+   */
   initStorage() {
-    // 检查是否首次使用
     const isFirstUse = getStorage('is_first_use')
     if (isFirstUse === null) {
       setStorage('is_first_use', true)
@@ -66,11 +95,14 @@ App({
     }
   },
 
-  // 切换暗黑模式
+  /**
+   * Toggles between light and dark theme modes.
+   * Updates global state, persists preference, and notifies all active pages
+   * via their onThemeChange callback if implemented.
+   */
   toggleDarkMode() {
     this.globalData.isDarkMode = !this.globalData.isDarkMode
     setStorage('theme_mode', this.globalData.isDarkMode ? 'dark' : 'light')
-    // 通知所有页面更新
     const pages = getCurrentPages()
     pages.forEach(page => {
       if (page.onThemeChange) {
