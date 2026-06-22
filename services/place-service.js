@@ -3,7 +3,7 @@
  * 提供景点数据的 CRUD 操作，基于本地存储实现
  *
  * @module services/place-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

@@ -3,7 +3,7 @@
  * 提供行程进度计算、标签映射、摘要生成等功能
  *
  * @module utils/trip-utils
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

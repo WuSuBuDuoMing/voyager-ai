@@ -4,7 +4,7 @@
  * 基于本地存储实现，首次调用自动加载模拟数据
  *
  * @module services/food-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

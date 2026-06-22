@@ -4,7 +4,7 @@
  * system info detection, theme management, and local storage setup.
  *
  * @module app
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */
@@ -23,7 +23,7 @@ App({
     /** @type {boolean} Whether dark mode is currently active */
     isDarkMode: false,
     /** @type {string} Application version number */
-    version: '1.12.0',
+    version: '1.15.0',
     /** @type {Object|null} Device system information from wx.getSystemInfoSync() */
     systemInfo: null
   },

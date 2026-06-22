@@ -3,7 +3,7 @@
  * 提供日期格式化、计算、比较等常用功能
  *
  * @module utils/date-utils
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

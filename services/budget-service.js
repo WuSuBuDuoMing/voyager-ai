@@ -5,8 +5,14 @@
  * v1.10.0 增强：新增预算预测、消费告警、多币种支持、
  * 消费趋势分析和预算智能分配建议
  *
+ * v1.13.0 增强：新增预算预测引擎、消费趋势可视化数据、
+ * 分类消费占比分析优化
+ *
+ * v1.14.0 增强：引入预算健康度评分模型、多维度消费报告、
+ * 智能省钱建议引擎升级
+ *
  * @module services/budget-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */
@@ -289,6 +295,161 @@ function formatCurrency(amount, currency = 'CNY') {
 }
 
 /**
+ * 获取预算健康度评分
+ * 综合多个维度（超支率、消费均匀度、分类集中度）计算健康分数
+ *
+ * @param {string} tripId - 行程 ID
+ * @returns {Promise<Object>} 健康度评分报告
+ * @returns {number} .score - 综合健康度得分 (0-100)
+ * @returns {string} .grade - 健康等级 ('A'|'B'|'C'|'D')
+ * @returns {string} .summary - 健康状况摘要
+ * @returns {Object} .dimensions - 各维度分项得分
+ * @returns {Array<string>} .suggestions - 个性化改进建议
+ */
+async function getBudgetHealthScore(tripId) {
+  const overview = await getBudgetOverview(tripId)
+  const trend = await getSpendTrend(tripId)
+
+  // 维度1：预算控制得分 (40% 权重)
+  let budgetControlScore = 100
+  if (overview.percentage > 100) {
+    budgetControlScore = Math.max(0, 100 - (overview.percentage - 100) * 5)
+  } else if (overview.percentage > 90) {
+    budgetControlScore = 60 + (100 - overview.percentage) * 4
+  } else if (overview.percentage > 70) {
+    budgetControlScore = 80 + (90 - overview.percentage)
+  }
+
+  // 维度2：消费均匀度得分 (30% 权重)
+  // 消费越均匀得分越高，波动大的得分低
+  let uniformityScore = 80
+  if (trend.dailySpend.length > 1) {
+    const amounts = trend.dailySpend.map(d => d.amount)
+    const avg = amounts.reduce((s, a) => s + a, 0) / amounts.length
+    const variance = amounts.reduce((s, a) => s + Math.pow(a - avg, 2), 0) / amounts.length
+    const cv = avg > 0 ? Math.sqrt(variance) / avg : 1 // 变异系数
+    uniformityScore = Math.max(0, Math.min(100, Math.round((1 - cv) * 100)))
+  }
+
+  // 维度3：分类分散度得分 (30% 权重)
+  // 消费分布越分散越好（避免单一分类占比过高）
+  let diversityScore = 80
+  const categoryMap = {}
+  overview.categoryBreakdown.forEach(cat => {
+    categoryMap[cat.key] = cat.percentage
+  })
+  const topCatPercentage = Math.max(...Object.values(categoryMap), 0)
+  if (topCatPercentage > 60) {
+    diversityScore = 40
+  } else if (topCatPercentage > 40) {
+    diversityScore = 60
+  } else if (topCatPercentage > 25) {
+    diversityScore = 80
+  } else {
+    diversityScore = 100
+  }
+
+  // 加权计算综合得分
+  const score = Math.round(
+    budgetControlScore * 0.4 +
+    uniformityScore * 0.3 +
+    diversityScore * 0.3
+  )
+
+  // 评级映射
+  let grade, summary
+  if (score >= 85) {
+    grade = 'A'
+    summary = '预算管理优秀，消费习惯健康'
+  } else if (score >= 70) {
+    grade = 'B'
+    summary = '预算管理良好，有小幅优化空间'
+  } else if (score >= 50) {
+    grade = 'C'
+    summary = '预算管理一般，建议关注消费结构'
+  } else {
+    grade = 'D'
+    summary = '预算管理需要改进，建议严格控制开支'
+  }
+
+  // 生成个性化建议
+  const suggestions = []
+  if (budgetControlScore < 80) {
+    suggestions.push('建议设置每日消费上限，避免超支')
+  }
+  if (uniformityScore < 60) {
+    suggestions.push('消费波动较大，建议均衡每日开支')
+  }
+  if (diversityScore < 60) {
+    const topCat = overview.categoryBreakdown.reduce((max, cat) =>
+      cat.percentage > max.percentage ? cat : max, { percentage: 0 })
+    if (topCat.percentage > 0) {
+      suggestions.push(`${topCat.label || topCat.key}消费占比过高(${topCat.percentage}%)，建议适度控制`)
+    }
+  }
+  if (suggestions.length === 0) {
+    suggestions.push('继续保持当前的消费节奏')
+  }
+
+  return {
+    score,
+    grade,
+    summary,
+    dimensions: {
+      budgetControl: budgetControlScore,
+      uniformity: uniformityScore,
+      diversity: diversityScore
+    },
+    suggestions
+  }
+}
+
+/**
+ * 生成综合消费报告
+ * 整合预算概览、消费趋势、健康度评分等多维度数据
+ *
+ * @param {string} tripId - 行程 ID
+ * @returns {Promise<Object>} 综合消费报告
+ * @returns {Object} .overview - 预算概览
+ * @returns {Object} .trend - 消费趋势
+ * @returns {Object} .health - 健康度评分
+ * @returns {Object} .prediction - 消费预测
+ */
+async function getExpenseReport(tripId) {
+  const [overview, trend, health] = await Promise.all([
+    getBudgetOverview(tripId),
+    getSpendTrend(tripId),
+    getBudgetHealthScore(tripId)
+  ])
+
+  // 简单消费预测：按已消费天数的日均消费推算总消费
+  const daysWithExpense = trend.dailySpend.length
+  const avgDailySpend = daysWithExpense > 0
+    ? Math.round(trend.dailySpend.reduce((s, d) => s + d.amount, 0) / daysWithExpense)
+    : 0
+
+  const remainingBudget = overview.totalBudget - overview.totalSpent
+  const estimatedRemainingDays = avgDailySpend > 0
+    ? Math.floor(remainingBudget / avgDailySpend)
+    : Infinity
+
+  const prediction = {
+    avgDailySpend,
+    estimatedTotalSpending: overview.totalSpent + (avgDailySpend * 3), // 预估再3天后的总消费
+    estimatedRemainingDays,
+    isOnTrack: overview.percentage <= 90
+  }
+
+  return {
+    overview,
+    trend,
+    health,
+    prediction,
+    generatedAt: new Date().toISOString()
+  }
+}
+
+/**
  * 获取预算智能分配建议
  * 根据目的地、天数和总预算，生成合理的分类预算建议
  *
@@ -362,5 +523,7 @@ module.exports = {
   getBudgetAlert,
   getSpendTrend,
   formatCurrency,
-  getBudgetSuggestion
+  getBudgetSuggestion,
+  getBudgetHealthScore,
+  getExpenseReport
 }

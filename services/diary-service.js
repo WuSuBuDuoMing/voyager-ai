@@ -4,7 +4,7 @@
  * 首次调用时自动加载模拟数据，后续操作读写本地缓存
  *
  * @module services/diary-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

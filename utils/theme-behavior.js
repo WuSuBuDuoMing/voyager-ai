@@ -10,7 +10,7 @@
  *   })
  *
  * @module utils/theme-behavior
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

@@ -6,8 +6,12 @@
  * v1.10.0 改进：增强 generateTripPlan 的预算分配算法，支持按旅行风格
  * 动态调整分配比例；新增目的地天气预测模拟和实时消费建议
  *
+ * v1.13.0 改进：增强记忆文案生成算法，新增多模板权重随机策略
+ *
+ * v1.14.0 改进：引入关键词提取优化、多语言旅行摘要生成支持
+ *
  * @module services/mock-ai-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

@@ -2,6 +2,41 @@
 
 All notable changes to Voyager AI will be documented in this file.
 
+## [1.15.0] - 2026-06-23
+
+### Added
+- `getBudgetHealthScore()` multi-dimensional budget health scoring API with weighted budget control, spending uniformity, and category diversity dimensions (0-100 score with A/B/C/D grades)
+- `getExpenseReport()` comprehensive expense report combining budget overview, trend analysis, health score, and spending prediction in a single API call
+- `getItineraryRecommendations()` season-aware itinerary recommendation engine with clothing tips, risk factors, pace suggestion, and fatigue estimation
+
+### Changed
+- Version bumped to v1.15.0 across all project files
+- All 8 service modules and all 6 utility modules updated with `@version 1.15.0` JSDoc tags
+- Enhanced module-level JSDoc documentation with v1.13.0-v1.15.0 feature summaries
+
+## [1.14.0] - 2026-06-23
+
+### Added
+- Fatigue model for itinerary density optimization: tracks cumulative fatigue across trip days and inserts rest suggestions when threshold (70) is exceeded
+- Multi-destination transport suggestions expanded from 5 to 15 cities (added Bangkok, Kyoto, Seoul, Singapore, Sydney, London, Iceland, Maldives, Xi'an, Lijiang)
+- Enhanced `generateDayTips()` with season-aware risk factor integration
+
+### Changed
+- Itinerary cost estimation now factors in `tripData.pace` (relaxed/normal/tight) for user-customizable pace control
+- Itinerary generation loop now tracks cumulative fatigue and adjusts daily tips accordingly
+
+## [1.13.0] - 2026-06-23
+
+### Added
+- Season-aware activity recommendation system: spring/summer/autumn/winter configurations with outdoor boost factors, seasonal activities, clothing tips, and risk factors
+- `_getSeason()` and `_getSeasonConfig()` internal APIs for date-based season detection
+- `_calculateFatigue()` internal API for estimating activity fatigue based on activity count, transit, meals, and rest
+- Budget prediction engine in `getExpenseReport()` with average daily spend calculation and estimated remaining days
+
+### Changed
+- `generateMockItinerary()` now integrates season config for activity recommendations and season-specific tips
+- Pace configuration now accepts user-specified pace from `tripData.pace` instead of hardcoded `normal`
+
 ## [1.12.0] - 2026-06-22
 
 ### Added

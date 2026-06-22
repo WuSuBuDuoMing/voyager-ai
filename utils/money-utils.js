@@ -3,7 +3,7 @@
  * 提供金额格式化、预算计算、预算状态判断等功能
  *
  * @module utils/money-utils
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

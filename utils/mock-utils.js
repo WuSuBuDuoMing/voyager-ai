@@ -3,7 +3,7 @@
  * 提供测试数据生成、模拟 API 延迟、深拷贝等开发辅助功能
  *
  * @module utils/mock-utils
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

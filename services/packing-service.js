@@ -6,7 +6,7 @@
  * 旅行风格行李建议和行李重量估算
  *
  * @module services/packing-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */

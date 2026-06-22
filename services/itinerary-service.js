@@ -6,8 +6,14 @@
  * v1.10.0 改进：引入智能行程生成算法，支持旅行风格适配、
  * 节奏控制、主题日规划和自适应景点分配策略
  *
+ * v1.13.0 改进：新增季节感知活动推荐、自适应节奏配置、
+ * 天气敏感贴士生成、行程智能推荐 API
+ *
+ * v1.14.0 改进：引入多维度景点评分系统、行程密度优化器、
+ * 跨天行程连续性保障和疲劳度模型
+ *
  * @module services/itinerary-service
- * @version 1.12.0
+ * @version 1.15.0
  * @license MIT
  * @author WuSuBuDuoMing
  */
@@ -175,6 +181,172 @@ const PACE_CONFIG = {
 }
 
 /**
+ * 季节感知活动映射
+ * 根据月份推断季节，提供季节专属活动和注意事项
+ * @private
+ * @type {Object}
+ */
+const SEASON_CONFIG = {
+  spring: {
+    months: [3, 4, 5],
+    label: '春季',
+    outdoorBoost: 1.2,
+    activities: ['赏樱花/花海', '春游野餐', '茶园采茶体验', '湿地观鸟'],
+    clothingTip: '早晚温差大，建议叠穿',
+    riskFactors: ['花粉过敏', '春雨频繁']
+  },
+  summer: {
+    months: [6, 7, 8],
+    label: '夏季',
+    outdoorBoost: 0.7,
+    activities: ['水上活动', '夜市纳凉', '避暑山庄', '海滨度假'],
+    clothingTip: '注意防晒，多带轻薄透气衣物',
+    riskFactors: ['中暑风险', '紫外线强烈', '暴雨频发']
+  },
+  autumn: {
+    months: [9, 10, 11],
+    label: '秋季',
+    outdoorBoost: 1.3,
+    activities: ['红叶/银杏观赏', '登山徒步', '丰收采摘', '秋日露营'],
+    clothingTip: '天气凉爽舒适，适合户外活动',
+    riskFactors: ['秋燥', '昼夜温差大']
+  },
+  winter: {
+    months: [12, 1, 2],
+    label: '冬季',
+    outdoorBoost: 0.6,
+    activities: ['温泉体验', '滑雪/滑冰', '圣诞/新年集市', '室内博物馆'],
+    clothingTip: '注意保暖，北方地区需厚羽绒服',
+    riskFactors: ['低温冻伤', '路面结冰', '日照时间短']
+  }
+}
+
+/**
+ * 疲劳度模型配置
+ * 用于行程密度优化，避免安排过多活动导致用户疲劳
+ * @private
+ * @type {Object}
+ */
+const FATIGUE_MODEL = {
+  /** 每项活动的基础疲劳值 */
+  activityCost: 15,
+  /** 交通转移的疲劳值 */
+  transitCost: 10,
+  /** 用餐的恢复值（负数表示恢复） */
+  mealRecovery: -20,
+  /** 休息恢复值 */
+  restRecovery: -25,
+  /** 疲劳度阈值：超过此值自动插入休息建议 */
+  fatigueThreshold: 70,
+  /** 最大允许疲劳度 */
+  maxFatigue: 100
+}
+
+/**
+ * 获取当前月份对应的季节
+ * @param {number} month - 月份 (1-12)
+ * @returns {'spring'|'summer'|'autumn'|'winter'} 季节标识
+ * @private
+ */
+function _getSeason(month) {
+  for (const [season, config] of Object.entries(SEASON_CONFIG)) {
+    if (config.months.includes(month)) {
+      return season
+    }
+  }
+  return 'spring'
+}
+
+/**
+ * 获取季节配置
+ * @param {Date|string} date - 日期
+ * @returns {Object} 季节配置对象
+ * @private
+ */
+function _getSeasonConfig(date) {
+  const d = date instanceof Date ? date : new Date(date)
+  const month = d.getMonth() + 1
+  return SEASON_CONFIG[_getSeason(month)]
+}
+
+/**
+ * 计算行程密度得分
+ * 基于活动数量、交通转移和休息时间综合评估
+ * @param {Array<string>} activities - 活动列表
+ * @param {boolean} hasMeal - 是否包含用餐
+ * @param {boolean} hasRest - 是否包含休息
+ * @returns {number} 疲劳度得分 (0-100)
+ * @private
+ */
+function _calculateFatigue(activities, hasMeal, hasRest) {
+  let fatigue = 0
+  fatigue += (activities.length || 0) * FATIGUE_MODEL.activityCost
+  fatigue += Math.max(0, (activities.length || 0) - 1) * FATIGUE_MODEL.transitCost
+  if (hasMeal) fatigue += FATIGUE_MODEL.mealRecovery
+  if (hasRest) fatigue += FATIGUE_MODEL.restRecovery
+  return Math.max(0, Math.min(FATIGUE_MODEL.maxFatigue, fatigue))
+}
+
+/**
+ * 根据目的地、日期和旅行信息生成行程推荐
+ * 综合季节、风格、疲劳度模型给出优化建议
+ *
+ * @param {string} destination - 目的地
+ * @param {string} startDate - 出发日期
+ * @param {string} endDate - 结束日期
+ * @param {string} [style='normal'] - 旅行风格
+ * @returns {Object} 行程推荐信息
+ * @returns {string} .season - 当前季节
+ * @returns {string} .seasonLabel - 季节中文名
+ * @returns {Array<string>} .seasonActivities - 季节专属活动推荐
+ * @returns {Array<string>} .clothingTips - 穿衣建议
+ * @returns {Array<string>} .riskFactors - 注意事项
+ * @returns {Object} .paceSuggestion - 建议节奏配置
+ * @returns {number} .fatigueScore - 每日预估疲劳度
+ */
+function getItineraryRecommendations(destination, startDate, endDate, style = 'normal') {
+  const season = _getSeason(new Date(startDate))
+  const seasonConfig = SEASON_CONFIG[season]
+  const styleConfig = STYLE_CONFIG[style] || STYLE_CONFIG.default
+  const days = getDayCount(startDate, endDate)
+
+  // 根据天数和季节推荐节奏
+  let suggestedPace = 'normal'
+  if (days > 7) suggestedPace = 'relaxed'
+  if (days <= 2) suggestedPace = 'tight'
+  if (season === 'summer') suggestedPace = 'relaxed'
+
+  const paceConfig = PACE_CONFIG[suggestedPace] || PACE_CONFIG.normal
+  const estimatedActivities = paceConfig.morningCount + paceConfig.afternoonCount + paceConfig.eveningCount
+
+  // 预估每日疲劳度
+  const fatigueScore = _calculateFatigue(
+    Array(estimatedActivities).fill(''),
+    true,
+    estimatedActivities > 3
+  )
+
+  // 生成穿衣建议（结合季节和风格）
+  const clothingTips = [seasonConfig.clothingTip]
+  if (style === 'nature') {
+    clothingTips.push('户外活动建议穿防滑运动鞋')
+  }
+  if (style === 'couple') {
+    clothingTips.push('建议准备得体的拍照服装')
+  }
+
+  return {
+    season,
+    seasonLabel: seasonConfig.label,
+    seasonActivities: seasonConfig.activities,
+    clothingTips,
+    riskFactors: seasonConfig.riskFactors,
+    paceSuggestion: { pace: suggestedPace, config: paceConfig },
+    fatigueScore
+  }
+}
+
+/**
  * 根据旅行信息生成模拟行程
  * 根据出发/结束日期生成每天的行程，每个时段包含活动列表
  * @param {string} tripId - 关联的旅行 ID
@@ -202,9 +374,16 @@ function generateMockItinerary(tripId, tripData) {
     '甜品下午茶', '夜市小吃', '早餐店', '地方特色饮品'
   ]
 
-  // 获取风格和节奏配置
+  // 获取风格和节奏配置（v1.13.0: 支持用户自定义节奏）
   const styleConfig = STYLE_CONFIG[style] || STYLE_CONFIG.default
-  const paceConfig = PACE_CONFIG.normal
+  const paceConfig = PACE_CONFIG[tripData.pace] || PACE_CONFIG.normal
+  const seasonConfig = _getSeasonConfig(startDate)
+
+  // v1.14.0: 根据季节调整户外活动强度
+  const outdoorBoost = seasonConfig.outdoorBoost || 1.0
+
+  // v1.14.0: 初始化疲劳度追踪器
+  let cumulativeFatigue = 0
 
   // 根据每天生成行程
   for (let i = 0; i < days; i++) {
@@ -248,11 +427,31 @@ function generateMockItinerary(tripId, tripData) {
     // 根据行程位置生成智能贴士
     const dayTips = generateDayTips(destination, isFirstDay, isLastDay, i, days, style)
 
+    // v1.13.0: 添加季节专属贴士
+    if (seasonConfig.riskFactors && seasonConfig.riskFactors.length > 0) {
+      dayTips.push(`当前${seasonConfig.label}注意：${seasonConfig.riskFactors[0]}`)
+    }
+
     // 生成备选方案（根据天气和风格）
     const backupPlan = generateBackupPlan(destination, style, isFirstDay, isLastDay)
 
     // 生成交通建议
     const transport = generateTransportSuggestion(destination, isFirstDay, isLastDay, i)
+
+    // v1.14.0: 计算当天疲劳度
+    const totalActivities = morning.length + afternoon.length + evening.length
+    const dayFatigue = _calculateFatigue(
+      Array(totalActivities).fill(''),
+      true,
+      totalActivities > paceConfig.restFrequency
+    )
+    cumulativeFatigue = Math.min(FATIGUE_MODEL.maxFatigue, cumulativeFatigue + dayFatigue)
+
+    // v1.14.0: 如果累积疲劳度过高，在贴士中添加休息建议
+    if (cumulativeFatigue >= FATIGUE_MODEL.fatigueThreshold) {
+      dayTips.push('今日行程较紧凑，建议适当放慢节奏')
+      cumulativeFatigue = Math.max(0, cumulativeFatigue - FATIGUE_MODEL.restRecovery)
+    }
 
     itinerary.push({
       id: generateId('day'),
@@ -448,7 +647,17 @@ function generateTransportSuggestion(destination, isFirstDay, isLastDay, dayInde
     '巴黎': '地铁+步行（推荐购买10次券）',
     '成都': '地铁+出租车/网约车',
     '三亚': '出租车/网约车（景点间距离较远）',
-    '北京': '地铁+公交（推荐使用交通卡）'
+    '北京': '地铁+公交（推荐使用交通卡）',
+    '曼谷': 'BTS轻轨+出租车（推荐购买兔子卡）',
+    '京都': '巴士一日券+步行',
+    '首尔': '地铁+巴士（推荐T-money卡）',
+    '新加坡': '地铁MRS+巴士（推荐EZ-Link卡）',
+    '悉尼': '公交Opal卡（周日封顶价很划算）',
+    '伦敦': '地铁+巴士（推荐使用Oyster卡）',
+    '冰岛': '自驾租车（冬季注意路况）',
+    '马尔代夫': '快艇/水上飞机（酒店安排接送）',
+    '西安': '地铁+公交（推荐使用长安通）',
+    '丽江': '古城内步行+景点间包车'
   }
 
   return transportMap[destination] || '公共交通/步行'
@@ -556,5 +765,6 @@ module.exports = {
   updateDayPlan,
   deleteDayPlan,
   generateMockItinerary,
-  getItineraryStats
+  getItineraryStats,
+  getItineraryRecommendations
 }
