@@ -114,5 +114,6 @@ module.exports = {
   updatePlace,
   deletePlace,
   toggleFavorite,
-  toggleVisited
+  toggleVisited,
+  MOCK_PLACES
 }

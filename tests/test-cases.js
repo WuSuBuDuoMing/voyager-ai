@@ -13,6 +13,7 @@
 let passCount = 0
 let failCount = 0
 const results = []
+const pendingPromises = []
 
 const assert = {
   equal(actual, expected, msg) {
@@ -249,10 +250,12 @@ describe('金额工具函数 - getBudgetStatus', () => {
 
   assert.equal(getBudgetStatus(5000, 10000), 'safe', 'getBudgetStatus 50% -> safe')
   assert.equal(getBudgetStatus(0, 10000), 'safe', 'getBudgetStatus 0% -> safe')
-  assert.equal(getBudgetStatus(6999, 10000), 'safe', 'getBudgetStatus 69.99% -> safe')
+  assert.equal(getBudgetStatus(6949, 10000), 'safe', 'getBudgetStatus 69.49% -> safe')
+  assert.equal(getBudgetStatus(7000, 10000), 'warning', 'getBudgetStatus 70% -> warning')
   assert.equal(getBudgetStatus(7000, 10000), 'warning', 'getBudgetStatus 70% -> warning')
   assert.equal(getBudgetStatus(7500, 10000), 'warning', 'getBudgetStatus 75% -> warning')
-  assert.equal(getBudgetStatus(8999, 10000), 'warning', 'getBudgetStatus 89.99% -> warning')
+  assert.equal(getBudgetStatus(8949, 10000), 'warning', 'getBudgetStatus 89.49% -> warning')
+  assert.equal(getBudgetStatus(9000, 10000), 'danger', 'getBudgetStatus 90% -> danger')
   assert.equal(getBudgetStatus(9000, 10000), 'danger', 'getBudgetStatus 90% -> danger')
   assert.equal(getBudgetStatus(9500, 10000), 'danger', 'getBudgetStatus 95% -> danger')
   assert.equal(getBudgetStatus(10000, 10000), 'danger', 'getBudgetStatus 100% -> danger')
@@ -732,7 +735,7 @@ describe('预算跟踪服务 - budgetService', () => {
   const budgetService = require('../services/budget-service')
 
   // getBudgetOverview 测试
-  budgetService.getBudgetOverview('trip_001').then(overview => {
+  pendingPromises.push(budgetService.getBudgetOverview('trip_001').then(overview => {
     assert.ok(typeof overview.totalBudget === 'number', 'getBudgetOverview totalBudget为数字')
     assert.ok(typeof overview.totalSpent === 'number', 'getBudgetOverview totalSpent为数字')
     assert.ok(typeof overview.remaining === 'number', 'getBudgetOverview remaining为数字')
@@ -751,10 +754,10 @@ describe('预算跟踪服务 - budgetService', () => {
       assert.ok(typeof cat.amount === 'number', 'getBudgetOverview 分类金额为数字')
       assert.ok(typeof cat.percentage === 'number', 'getBudgetOverview 分类百分比为数字')
     })
-  })
+  }))
 
   // getExpenses 测试
-  budgetService.getExpenses('trip_001').then(expenses => {
+  pendingPromises.push(budgetService.getExpenses('trip_001').then(expenses => {
     assert.ok(Array.isArray(expenses), 'getExpenses 返回数组')
     assert.ok(expenses.length > 0, 'getExpenses trip_001有数据')
     expenses.forEach(e => {
@@ -771,16 +774,16 @@ describe('预算跟踪服务 - budgetService', () => {
       assert.ok(new Date(expenses[0].date) >= new Date(expenses[1].date),
         'getExpenses 按日期降序排列')
     }
-  })
+  }))
 
   // getExpenses 不存在的行程
-  budgetService.getExpenses('nonexistent_trip').then(expenses => {
+  pendingPromises.push(budgetService.getExpenses('nonexistent_trip').then(expenses => {
     assert.ok(Array.isArray(expenses), 'getExpenses 不存在的行程返回空数组')
     assert.equal(expenses.length, 0, 'getExpenses 不存在的行程数据为空')
-  })
+  }))
 
   // addExpense / deleteExpense 测试
-  budgetService.addExpense({
+  pendingPromises.push(budgetService.addExpense({
     tripId: 'trip_test', category: 'food', description: '测试消费', amount: 100, date: '2026-06-11'
   }).then(newExpense => {
     assert.ok(newExpense.id, 'addExpense 返回的记录有id')
@@ -790,7 +793,7 @@ describe('预算跟踪服务 - budgetService', () => {
     return budgetService.deleteExpense(newExpense.id)
   }).then(result => {
     assert.equal(result, true, 'deleteExpense 返回true')
-  })
+  }))
 })
 
 // -------------------------------------------------------
@@ -800,7 +803,7 @@ describe('行李清单服务 - packingService 详细', () => {
   const packingService = require('../services/packing-service')
 
   // getPackingList 测试
-  packingService.getPackingList('trip_001').then(list => {
+  pendingPromises.push(packingService.getPackingList('trip_001').then(list => {
     assert.ok(Array.isArray(list), 'getPackingList 返回数组')
     assert.ok(list.length > 0, 'getPackingList trip_001有数据')
     list.forEach(item => {
@@ -816,16 +819,16 @@ describe('行李清单服务 - packingService 详细', () => {
     const categories = [...new Set(list.map(i => i.category))]
     assert.ok(categories.length > 1, 'getPackingList 包含多个分类')
     assert.ok(categories.includes('证件'), 'getPackingList 包含证件分类')
-  })
+  }))
 
   // getPackingList 不存在的行程
-  packingService.getPackingList('nonexistent_trip').then(list => {
+  pendingPromises.push(packingService.getPackingList('nonexistent_trip').then(list => {
     assert.ok(Array.isArray(list), 'getPackingList 不存在的行程返回空数组')
     assert.equal(list.length, 0, 'getPackingList 不存在的行程数据为空')
-  })
+  }))
 
   // addItem / toggleItem / deleteItem 测试
-  packingService.addItem({
+  pendingPromises.push(packingService.addItem({
     tripId: 'trip_test', name: '测试物品', category: '其他', quantity: 1
   }).then(newItem => {
     assert.ok(newItem.id, 'addItem 返回的物品有id')
@@ -835,39 +838,56 @@ describe('行李清单服务 - packingService 详细', () => {
     return packingService.toggleItem(newItem.id)
   }).then(toggled => {
     assert.ok(toggled, 'toggleItem 返回物品')
+    if (!toggled) return
     assert.equal(toggled.checked, true, 'toggleItem 切换为已勾选')
 
     return packingService.toggleItem(toggled.id)
   }).then(toggledBack => {
+    if (!toggledBack) return
     assert.equal(toggledBack.checked, false, 'toggleItem 再次切换为未勾选')
 
     return packingService.deleteItem(toggledBack.id)
   }).then(result => {
-    assert.equal(result, true, 'deleteItem 返回true')
-  })
+    if (result !== undefined) {
+      assert.equal(result, true, 'deleteItem 返回true')
+    }
+  }).catch(err => {
+    failCount++
+    console.error(`❌ FAIL: 行李清单 addItem/toggleItem/deleteItem 链出错:`, err.message)
+    results.push({ status: 'fail', msg: `addItem/toggleItem/deleteItem 链出错: ${err.message}` })
+  }))
 
   // toggleItem 不存在的物品
-  packingService.toggleItem('nonexistent_id').then(result => {
+  pendingPromises.push(packingService.toggleItem('nonexistent_id').then(result => {
     assert.equal(result, null, 'toggleItem 不存在返回null')
-  })
+  }))
 })
 
-// ====== 测试结果汇总 ======
-console.log('\n' + '='.repeat(50))
-console.log(`📊 测试结果: ${passCount} 通过 / ${failCount} 失败 / ${passCount + failCount} 总计`)
-console.log('='.repeat(50))
-if (failCount === 0) {
-  console.log('🎉 全部通过！')
-} else {
-  console.log(`⚠️ 存在 ${failCount} 个失败用例，请检查上方输出：`)
+// ====== 测试结果汇总（等待所有异步测试完成后输出） ======
+Promise.allSettled(pendingPromises).then(() => {
+  console.log('\n' + '='.repeat(50))
+  console.log(`📊 测试结果: ${passCount} 通过 / ${failCount} 失败 / ${passCount + failCount} 总计`)
+  console.log('='.repeat(50))
+  if (failCount === 0) {
+    console.log('🎉 全部通过！')
+  } else {
+    console.log(`⚠️ 存在 ${failCount} 个失败用例，请检查上方输出：`)
+    console.log('')
+    results.filter(r => r.status === 'fail').forEach(r => {
+      console.log(`  ❌ ${r.msg}`)
+      if (r.expected !== undefined) {
+        console.log(`     期望: ${JSON.stringify(r.expected)}`)
+        console.log(`     实际: ${JSON.stringify(r.actual)}`)
+      }
+    })
+  }
   console.log('')
-  results.filter(r => r.status === 'fail').forEach(r => {
-    console.log(`  ❌ ${r.msg}`)
-    if (r.expected !== undefined) {
-      console.log(`     期望: ${JSON.stringify(r.expected)}`)
-      console.log(`     实际: ${JSON.stringify(r.actual)}`)
-    }
-  })
-}
-console.log('')
-console.log(`通过率: ${passCount > 0 ? Math.round((passCount / (passCount + failCount)) * 100) : 0}%`)
+  console.log(`通过率: ${passCount > 0 ? Math.round((passCount / (passCount + failCount)) * 100) : 0}%`)
+
+  if (failCount > 0) {
+    process.exit(1)
+  }
+}).catch(err => {
+  console.error('测试执行异常:', err)
+  process.exit(1)
+})

@@ -321,7 +321,7 @@ const MOCK_ITINERARY = [
     date: '2026-06-21',
     title: '水上市场与暹罗商圈',
     morning: ['丹嫩沙多水上市场(半日游)', '乘船游览水道', '船上小吃体验'],
-   下午: ['暹罗广场/暹罗百丽宫', 'Jim Thompson故居', '暹罗海洋世界(可选)'],
+    afternoon: ['暹罗广场/暹罗百丽宫', 'Jim Thompson故居', '暹罗海洋世界(可选)'],
     evening: ['拉差达火车夜市', '火山排骨/Jay Fai海鲜', '夜市购物'],
     estimatedCost: 3500,
     actualCost: 3200,
