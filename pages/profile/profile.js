@@ -1,3 +1,9 @@
+/**
+ * pages/profile/profile.js
+ * User profile and settings tab page. Displays travel statistics,
+ * theme toggle, currency selection, cache management, and app info.
+ * @module pages/profile
+ */
 const themeBehavior = require('../../utils/theme-behavior')
 const { clearStorage, getStorageSize } = require('../../utils/storage-utils')
 const dateUtils = require('../../utils/date-utils')
@@ -15,7 +21,7 @@ Page({
     darkMode: false,
     defaultCurrency: 'CNY',
     cacheSize: '0',
-    version: '1.0.0'
+    version: '1.9.0'
   },
 
   onLoad() {
@@ -103,7 +109,7 @@ Page({
   onVersionTap() {
     wx.showModal({
       title: '版本信息',
-      content: 'AI 旅行计划助手 v1.0.0\n\n智能规划，轻松出行\n让每一次旅行都充满期待',
+      content: 'AI 旅行计划助手 v1.9.0\n\n智能规划，轻松出行\n让每一次旅行都充满期待',
       showCancel: false,
       confirmText: '知道了'
     })

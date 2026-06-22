@@ -1,3 +1,9 @@
+/**
+ * pages/budget/budget.js
+ * Budget tracking page for a specific trip. Displays spending overview,
+ * category breakdowns, and expense list. Supports adding and deleting expenses.
+ * @module pages/budget
+ */
 const themeBehavior = require('../../utils/theme-behavior')
 const budgetService = require('../../services/budget-service')
 const tripService = require('../../services/trip-service')

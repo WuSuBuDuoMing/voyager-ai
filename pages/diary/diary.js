@@ -1,3 +1,9 @@
+/**
+ * pages/diary/diary.js
+ * Travel diary tab page. Displays all diary entries with trip filtering,
+ * mood and weather tags, and supports creating new diary entries.
+ * @module pages/diary
+ */
 const themeBehavior = require('../../utils/theme-behavior')
 const diaryService = require('../../services/diary-service')
 const { MOCK_TRIPS } = require('../../data/mock-trips')

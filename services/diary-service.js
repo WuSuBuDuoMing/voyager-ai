@@ -2,7 +2,11 @@
  * 日记服务模块
  * 提供旅行日记的 CRUD 操作，基于本地存储实现
  * 首次调用时自动加载模拟数据，后续操作读写本地缓存
+ *
  * @module services/diary-service
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 const { getStorage, setStorage } = require('../utils/storage-utils')

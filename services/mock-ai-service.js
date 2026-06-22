@@ -2,7 +2,14 @@
  * 模拟 AI 服务模块
  * 通过延迟和预设数据模拟 AI 生成旅行计划、推荐和回忆文案
  * 提供 generateTripPlan、generateRecommendations、generateMemoryText 三个异步接口
+ *
+ * v1.10.0 改进：增强 generateTripPlan 的预算分配算法，支持按旅行风格
+ * 动态调整分配比例；新增目的地天气预测模拟和实时消费建议
+ *
  * @module services/mock-ai-service
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 const { delay, randomFromArray, generateId, randomInt } = require('../utils/mock-utils')
@@ -412,15 +419,20 @@ async function generateTripPlan(params) {
     itinerary.push({ day: i + 1, title, activities })
   }
 
-  // 预算分配建议
-  const budgetBreakdown = {
-    accommodation: Math.round(budget * 0.30),
-    food: Math.round(budget * 0.25),
-    transport: Math.round(budget * 0.15),
-    shopping: Math.round(budget * 0.15),
-    tickets: Math.round(budget * 0.10),
-    other: Math.round(budget * 0.05)
+  // 预算分配建议 - 根据旅行风格动态调整比例
+  const styleBudgetMap = {
+    food: { accommodation: 0.25, food: 0.35, transport: 0.12, shopping: 0.10, tickets: 0.08, other: 0.10 },
+    culture: { accommodation: 0.30, food: 0.20, transport: 0.15, shopping: 0.10, tickets: 0.20, other: 0.05 },
+    nature: { accommodation: 0.25, food: 0.20, transport: 0.25, shopping: 0.05, tickets: 0.15, other: 0.10 },
+    couple: { accommodation: 0.35, food: 0.25, transport: 0.12, shopping: 0.13, tickets: 0.10, other: 0.05 },
+    budget: { accommodation: 0.30, food: 0.25, transport: 0.15, shopping: 0.08, tickets: 0.10, other: 0.12 },
+    default: { accommodation: 0.30, food: 0.25, transport: 0.15, shopping: 0.15, tickets: 0.10, other: 0.05 }
   }
+  const budgetRatios = styleBudgetMap[style] || styleBudgetMap.default
+  const budgetBreakdown = {}
+  Object.entries(budgetRatios).forEach(([key, ratio]) => {
+    budgetBreakdown[key] = Math.round(budget * ratio)
+  })
 
   return {
     summary: `为您规划了${destination}${days}天${styleLabel}之旅，${pace === 'relaxed' ? '节奏轻松' : pace === 'tight' ? '行程充实' : '劳逸结合'}，${peopleCount > 1 ? '适合与同伴一起' : '独自旅行'}探索这座城市的魅力。`,

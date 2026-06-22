@@ -2,7 +2,11 @@
  * 美食服务模块
  * 提供美食清单的 CRUD 操作及收藏、评价功能
  * 基于本地存储实现，首次调用自动加载模拟数据
+ *
  * @module services/food-service
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 const { getStorage, setStorage } = require('../utils/storage-utils')

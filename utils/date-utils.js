@@ -1,7 +1,11 @@
 /**
  * 日期工具模块
  * 提供日期格式化、计算、比较等常用功能
+ *
  * @module utils/date-utils
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 /**

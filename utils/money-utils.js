@@ -1,7 +1,11 @@
 /**
  * 金额/预算工具模块
  * 提供金额格式化、预算计算、预算状态判断等功能
+ *
  * @module utils/money-utils
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 /**

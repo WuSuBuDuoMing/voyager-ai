@@ -10,6 +10,9 @@
  *   })
  *
  * @module utils/theme-behavior
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 const app = getApp()

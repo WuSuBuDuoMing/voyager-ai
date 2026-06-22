@@ -120,8 +120,104 @@ jobs:
           echo "=== Checking documentation files ==="
           for file in README.md LICENSE CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md CHANGELOG.md; do
             if [ ! -f "$file" ]; then
-              echo "WARNING: $file not found"
+              echo "ERROR: $file not found"
+              exit 1
             else
               echo "FOUND: $file"
             fi
           done
+
+      - name: Verify version consistency
+        run: |
+          echo "=== Checking version consistency ==="
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('project.config.json', 'utf8'));
+            const appContent = fs.readFileSync('app.js', 'utf8');
+            const versionMatch = appContent.match(/version:\s*['\"]([^'\"]+)['\"]/);
+
+            if (!pkg.version) {
+              console.error('ERROR: version not found in project.config.json');
+              process.exit(1);
+            }
+
+            console.log('project.config.json version:', pkg.version);
+
+            if (versionMatch) {
+              console.log('app.js version:', versionMatch[1]);
+              if (versionMatch[1] !== pkg.version) {
+                console.error('ERROR: Version mismatch between project.config.json and app.js');
+                process.exit(1);
+              }
+            } else {
+              console.log('WARNING: Could not extract version from app.js');
+            }
+            console.log('Version check passed.');
+          "
+
+      - name: Verify JSDoc coverage in services
+        run: |
+          echo "=== Checking JSDoc coverage in service files ==="
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const serviceDir = 'services';
+            const files = fs.readdirSync(serviceDir).filter(f => f.endsWith('.js'));
+            let warnings = 0;
+
+            for (const file of files) {
+              const content = fs.readFileSync(path.join(serviceDir, file), 'utf8');
+              const hasModule = content.includes('@module');
+              const jsdocCount = (content.match(/\/\*\*/g) || []).length;
+
+              if (!hasModule) {
+                console.error('WARNING: ' + file + ' missing @module tag');
+                warnings++;
+              }
+              if (jsdocCount < 3) {
+                console.error('WARNING: ' + file + ' has only ' + jsdocCount + ' JSDoc blocks (expected 3+)');
+                warnings++;
+              }
+              console.log(file + ': ' + jsdocCount + ' JSDoc blocks, @module: ' + (hasModule ? 'yes' : 'no'));
+            }
+
+            if (warnings > 0) {
+              console.log('Found ' + warnings + ' JSDoc warning(s)');
+            } else {
+              console.log('All service files have adequate JSDoc coverage.');
+            }
+          "
+
+      - name: Verify JSDoc coverage in utilities
+        run: |
+          echo "=== Checking JSDoc coverage in utility files ==="
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const utilDir = 'utils';
+            const files = fs.readdirSync(utilDir).filter(f => f.endsWith('.js'));
+            let warnings = 0;
+
+            for (const file of files) {
+              const content = fs.readFileSync(path.join(utilDir, file), 'utf8');
+              const hasModule = content.includes('@module');
+              const jsdocCount = (content.match(/\/\*\*/g) || []).length;
+
+              if (!hasModule) {
+                console.error('WARNING: ' + file + ' missing @module tag');
+                warnings++;
+              }
+              console.log(file + ': ' + jsdocCount + ' JSDoc blocks, @module: ' + (hasModule ? 'yes' : 'no'));
+            }
+
+            if (warnings > 0) {
+              console.log('Found ' + warnings + ' JSDoc warning(s)');
+            } else {
+              console.log('All utility files have adequate JSDoc coverage.');
+            }
+          "
+
+      - name: Run test suite
+        run: |
+          echo "=== Running test suite ==="
+          npm test

@@ -1,3 +1,9 @@
+/**
+ * pages/food/food.js
+ * Food guide page for browsing, filtering, and reviewing local cuisine.
+ * Supports favorites, eaten tracking, and detailed food view modal.
+ * @module pages/food
+ */
 const themeBehavior = require('../../utils/theme-behavior')
 const foodService = require('../../services/food-service')
 const { MOCK_TRIPS } = require('../../data/mock-trips')

@@ -1,7 +1,11 @@
 /**
  * 景点服务模块
  * 提供景点数据的 CRUD 操作，基于本地存储实现
+ *
  * @module services/place-service
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 const { getStorage, setStorage } = require('../utils/storage-utils')

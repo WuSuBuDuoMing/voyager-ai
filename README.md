@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![WeChat Mini Program](https://img.shields.io/badge/Platform-WeChat%20Mini%20Program-07C160?logo=wechat&logoColor=white)]()
-[![Version](https://img.shields.io/badge/Version-v1.9.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/Version-v1.12.0-blue.svg)]()
 [![CI](https://github.com/WuSuBuDuoMing/voyager-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/WuSuBuDuoMing/voyager-ai/actions/workflows/ci.yml)
 
 **[中文文档](README.zh-CN.md)**
@@ -42,8 +42,10 @@ Whether you are planning a weekend getaway or a month-long adventure, Voyager AI
 ## Features
 
 - **AI Itinerary Generation** -- Describe your trip in one sentence and receive a full day-by-day plan with activities, dining suggestions, and budget estimates
-- **Budget Management** -- Track expenses with category breakdowns, overspend alerts (70%/90% thresholds), and visual progress bars
-- **Packing Checklist** -- Smart luggage management with categories, quantity tracking, and circular progress visualization
+- **Smart Itinerary Engine** -- Style-aware (food/culture/nature/couple/budget) activity allocation with pace control (relaxed/normal/tight), theme day rotation, and adaptive spot distribution
+- **Budget Management** -- Track expenses with category breakdowns, overspend alerts (70%/90% thresholds), visual progress bars, spending trend analysis, and multi-currency support (CNY/USD/EUR/JPY/GBP/THB/SGD/KRW)
+- **Budget Forecasting** -- Intelligent budget allocation suggestions based on destination, travel style, and trip duration
+- **Packing Checklist** -- Smart luggage management with categories, quantity tracking, circular progress visualization, weight estimation, and seasonal/smart recommendations
 - **Place Management** -- Curate attractions with favorites, visited status, star ratings, and detailed descriptions
 - **Food Guide** -- Discover local cuisine with ratings, reviews, wishlists, and eaten-tracking
 - **Travel Diary** -- Record memories with mood tags, weather icons, photo galleries, step counts, and daily costs
@@ -98,6 +100,9 @@ Whether you are planning a weekend getaway or a month-long adventure, Voyager AI
 
 - Describe your trip naturally (e.g., "6-day food trip to Tokyo for two, budget 25000 RMB")
 - The AI generates a complete plan with morning/afternoon/evening activities, dining suggestions, and estimated daily costs
+- Itinerary adapts to your travel style: food tours prioritize restaurant visits, culture tours focus on museums and historic sites
+- Pace control generates relaxed (fewer activities per day), normal, or tight (maximum coverage) schedules
+- Each day includes smart tips, transport suggestions, and weather backup plans
 - Regenerate or manually adjust any day's schedule
 
 ### Budget Tracking
@@ -105,6 +110,16 @@ Whether you are planning a weekend getaway or a month-long adventure, Voyager AI
 - Add expenses as you go with category tags (transport, accommodation, food, tickets, shopping, etc.)
 - View real-time budget overview with color-coded status (green/yellow/red)
 - See category breakdowns and daily averages
+- Receive automatic spending alerts at 70% and 90% budget thresholds
+- View spending trend analysis to identify peak spending days and top categories
+- Get intelligent budget allocation suggestions based on destination and travel style
+- Switch currency display between CNY, USD, EUR, JPY, GBP, THB, SGD, and KRW
+
+### Smart Packing
+
+- AI-generated packing lists based on trip type (international/domestic) and season (spring/summer/autumn/winter)
+- Track packing progress by category with circular progress visualization
+- Estimate total luggage weight per category to avoid overweight baggage
 
 ### Dark Mode
 
@@ -144,13 +159,13 @@ voyager-ai/
 | Service | Methods | Description |
 |---------|---------|-------------|
 | `trip-service` | `getAllTrips`, `getTripById`, `createTrip`, `updateTrip`, `deleteTrip`, `searchTrips`, `filterTripsByStatus`, `updateTripBudget` | Trip CRUD with search and filtering |
-| `itinerary-service` | `getItineraryByTripId`, `getDayPlan`, `createDayPlan`, `updateDayPlan`, `deleteDayPlan`, `generateMockItinerary` | Daily itinerary management + AI generation |
-| `budget-service` | `getBudgetOverview`, `getExpenses`, `addExpense`, `deleteExpense`, `getCategories` | Budget tracking with category breakdowns |
-| `packing-service` | `getPackingList`, `addItem`, `toggleItem`, `deleteItem`, `getCategories` | Luggage checklist management |
+| `itinerary-service` | `getItineraryByTripId`, `getDayPlan`, `createDayPlan`, `updateDayPlan`, `deleteDayPlan`, `generateMockItinerary`, `getItineraryStats` | Daily itinerary management + style-aware AI generation with pace control, backup plans, and transport suggestions |
+| `budget-service` | `getBudgetOverview`, `getExpenses`, `addExpense`, `deleteExpense`, `getCategories`, `getBudgetAlert`, `getSpendTrend`, `formatCurrency`, `getBudgetSuggestion` | Budget tracking with alerts, trend analysis, multi-currency, and intelligent allocation |
+| `packing-service` | `getPackingList`, `addItem`, `toggleItem`, `deleteItem`, `getCategories`, `getSmartRecommendations`, `calculateWeight`, `getPackingStats` | Luggage checklist with smart recommendations, weight estimation, and per-category stats |
 | `diary-service` | `getDiariesByTripId`, `getDiaryById`, `getAllDiaries`, `createDiary`, `updateDiary`, `deleteDiary`, `getMoodOptions`, `getWeatherOptions` | Travel diary CRUD |
 | `food-service` | `getFoodByTripId`, `getFoodById`, `toggleFavorite`, `toggleEaten`, `addFoodReview`, `getFavoriteFoods` | Food guide with reviews |
 | `place-service` | `getPlaces`, `addPlace`, `updatePlace`, `deletePlace`, `toggleFavorite`, `toggleVisited` | Place management with favorites |
-| `mock-ai-service` | `generateTripPlan`, `generateRecommendations`, `generateMemoryText` | AI simulation with destination-specific data |
+| `mock-ai-service` | `generateTripPlan`, `generateRecommendations`, `generateMemoryText` | AI simulation with style-aware budget allocation and destination-specific data |
 
 ## Data Model
 
@@ -208,6 +223,10 @@ require('./tests/test-cases.js')
 - Budget calculation logic
 - Packing progress tracking
 - AI itinerary generation mock
+- Budget alerts and spending trend analysis
+- Smart packing recommendations
+- Multi-currency formatting
+- Itinerary statistics API
 
 ## Roadmap
 
@@ -221,6 +240,9 @@ See the full [CHANGELOG.md](CHANGELOG.md) for release history.
 - [x] v1.4.0 -- Security policy, open-source best practices
 - [x] v1.6.0 -- Code of Conduct, CODEOWNERS, Issue/PR templates
 - [x] v1.9.0 -- Community docs (CONTRIBUTING, SECURITY), CI enhancement, README overhaul
+- [x] v1.10.0 -- Smart itinerary engine (style-aware, pace control), budget alerts & forecasting, AI budget allocation by style
+- [x] v1.11.0 -- Smart packing recommendations (seasonal/weight estimation), spending trend analysis, enhanced JSDoc across all modules
+- [x] v1.12.0 -- Multi-currency support (8 currencies), budget suggestion engine, itinerary stats API, packing stats API, README overhaul
 
 ### Planned
 

@@ -1,7 +1,11 @@
 /**
  * 本地存储工具模块
  * 封装微信小程序的 Storage API，提供统一的存取接口和错误处理
+ *
  * @module utils/storage-utils
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 /**

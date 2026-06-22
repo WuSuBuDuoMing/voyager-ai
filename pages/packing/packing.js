@@ -1,3 +1,9 @@
+/**
+ * pages/packing/packing.js
+ * Packing checklist page for managing travel luggage items. Supports
+ * category filtering, toggle packed/unpacked, add and delete items.
+ * @module pages/packing
+ */
 const themeBehavior = require('../../utils/theme-behavior')
 const packingService = require('../../services/packing-service')
 

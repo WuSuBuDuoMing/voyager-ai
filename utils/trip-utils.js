@@ -1,7 +1,11 @@
 /**
  * 行程工具模块
  * 提供行程进度计算、标签映射、摘要生成等功能
+ *
  * @module utils/trip-utils
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 /**

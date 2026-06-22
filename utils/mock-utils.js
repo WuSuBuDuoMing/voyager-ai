@@ -1,7 +1,11 @@
 /**
  * 模拟数据工具模块
  * 提供测试数据生成、模拟 API 延迟、深拷贝等开发辅助功能
+ *
  * @module utils/mock-utils
+ * @version 1.12.0
+ * @license MIT
+ * @author WuSuBuDuoMing
  */
 
 /**

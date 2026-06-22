@@ -2,6 +2,57 @@
 
 All notable changes to Voyager AI will be documented in this file.
 
+## [1.12.0] - 2026-06-22
+
+### Added
+- Multi-currency support: 8 currencies (CNY, USD, EUR, JPY, GBP, THB, SGD, KRW) with real-time conversion in budget-service
+- `formatCurrency()` API for flexible currency display across the app
+- `getBudgetSuggestion()` intelligent budget allocation engine based on destination, trip duration, and total budget with savings tips
+- `getItineraryStats()` API for per-trip itinerary statistics (total/average estimated and actual costs)
+- `getPackingStats()` API for per-trip packing progress breakdown by category
+- Enhanced README Features section with all new capabilities
+- Enhanced README Usage section with detailed AI Itinerary, Budget Tracking, and Smart Packing guides
+- Updated README Service Layer table with new methods and descriptions
+- Updated README Roadmap with v1.10.0-v1.12.0 completions
+- Updated README Testing coverage list
+
+### Changed
+- Version bumped to v1.12.0 across project.config.json, package.json, and app.js
+- README badge updated to v1.12.0
+
+## [1.11.0] - 2026-06-21
+
+### Added
+- Smart packing recommendations in packing-service: `getSmartRecommendations()` supports international/domestic trip types with seasonal clothing templates (spring/summer/autumn/winter)
+- Luggage weight estimation: `calculateWeight()` computes total weight and per-category weight distribution with default weight fallbacks
+- Packing progress stats: `getPackingStats()` returns overall completion percentage and per-category breakdown
+- Spending trend analysis in budget-service: `getSpendTrend()` provides daily spend breakdown, peak spending day identification, and top category detection
+- Comprehensive JSDoc with @version, @license, @author tags added to all 8 service modules and all 6 utility modules
+- Enhanced inline comments in itinerary-service backup plans, transport suggestions, and day-tip generation
+
+### Changed
+- Budget service module header updated with feature summary for v1.10.0 enhancements
+- Packing service module header updated with feature summary for v1.11.0 enhancements
+- All utility modules (date-utils, money-utils, trip-utils, storage-utils, mock-utils, theme-behavior) updated with version tags
+
+## [1.10.0] - 2026-06-20
+
+### Added
+- Smart itinerary generation engine in itinerary-service with style-aware activity allocation (food/culture/nature/couple/budget styles)
+- Pace control system: relaxed, normal, and tight schedule generation with configurable activity counts per time slot
+- Intelligent day-tip generation based on destination, trip position (first/middle/last day), and travel style
+- Weather backup plan generation tailored to trip style and destination
+- Smart transport suggestions by destination (e.g., subway passes for Tokyo, carnet for Paris)
+- `getBudgetAlert()` API in budget-service for real-time overspend warnings at 70%/90% thresholds with descriptive messages
+- `getSpendTrend()` spending trend analysis API for daily spend visualization and peak detection
+- Style-based budget allocation in mock-ai-service: food trips allocate 35% to dining, culture trips allocate 20% to tickets, etc.
+- Season-aware `formatDate()` usage replacing raw ISO string generation in itinerary creation
+
+### Changed
+- Itinerary `generateMockItinerary()` refactored with modular helper functions: `buildMorningActivities()`, `buildAfternoonActivities()`, `buildEveningActivities()`, `generateDayTips()`, `generateBackupPlan()`, `generateTransportSuggestion()`
+- Estimated cost calculation now uses variance-based randomization with a 200 minimum floor
+- Itinerary module header updated with feature summary
+
 ## [1.9.0] - 2026-06-18
 
 ### Added

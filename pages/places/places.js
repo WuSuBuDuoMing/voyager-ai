@@ -1,3 +1,9 @@
+/**
+ * pages/places/places.js
+ * Place management page for browsing attractions with type-based filtering.
+ * Supports toggling favorites and visited status.
+ * @module pages/places
+ */
 const themeBehavior = require('../../utils/theme-behavior')
 const placeService = require('../../services/place-service')
 const { MOCK_TRIPS } = require('../../data/mock-trips')
